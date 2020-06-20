@@ -11,11 +11,11 @@ Advanced Hive Bedrock API wrapper with caching.
 ```js
 import HiveApi from "hive-tools-wrapper/lib/HiveApi"
 
-// Make a new HiveApi instance, with a 300 second cache.
-let api = new HiveApi(300)
+// Set API cache to 300 seconds
+HiveApi.setCacheTimeout(300);
 
 // Get player data from the Hive API.
-api.getAllTimePlayerStatistics("wars", "NeutronicMC").then((response) => {
+HiveApi.getAllTimePlayerStatistics("wars", "NeutronicMC").then((response) => {
     // Return the all-time win count for NeutronicMC.
     console.log(response.victories);
 });
