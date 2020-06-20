@@ -8,7 +8,7 @@ Advanced Hive Bedrock API wrapper with caching.
 ## Getting started
 *Work in progress.*
 ```js
-import HiveApi from "hive-tools-wrapper"
+import HiveApi from "hive-tools-wrapper/lib/HiveApi"
 
 // Make a new HiveApi instance, with a 300 second cache.
 let api = new HiveApi(300)

@@ -1,6 +1,5 @@
-import HiveToolsAPI from "../src/HiveApi";
 import ApiClient from "../src/api/ApiClient";
-let api = new HiveToolsAPI(1);
+import HiveApi from "../src/HiveApi";
 
 test('path builder works correctly', async () => {
     let params = {
@@ -14,8 +13,13 @@ test('cache gets new data', async () => {
     let params = {
         'game': "wars"
     };
-    let response = await api.getData("/game/all/{game}", params, true);
+    let response = await ApiClient.getData("/game/all/{game}", params);
     expect(response.status).toBe(200);
+});
+
+test('extra stats calculations work', async () => {
+    let response = await HiveApi.getAllTimePlayerStatistics("wars", "NeutronicMC");
+    expect(response.kdr).toBeDefined();
 });
 
 test('cache returns cached data', async () => {
@@ -23,9 +27,10 @@ test('cache returns cached data', async () => {
         'game': "wars"
     };
 
-    await api.getData("/game/all/{game}", params, true);
+    ApiClient.setCacheTimeout(300);
+    await ApiClient.getData("/game/all/{game}", params);
     let start = new Date().getTime();
-    await api.getData("/game/all/{game}", params, true);
+    await ApiClient.getData("/game/all/{game}", params);
     let diff = (new Date().getTime()) - start;
 
     expect(diff).toBeLessThan(5);

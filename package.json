@@ -1,8 +1,9 @@
 {
   "name": "hive-tools-wrapper",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Advanced Hive Bedrock API wrapper with caching.",
-  "main": "index.js",
+  "main": "HiveApi.js",
+  "types": "HiveApi.d.ts",
   "files": [
     "lib/**/*"
   ],
@@ -21,7 +22,7 @@
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
