@@ -7,6 +7,7 @@ Advanced Hive Bedrock API wrapper with caching.
 
 ## Getting started
 *Work in progress.*
+
 ```js
 import HiveApi from "hive-tools-wrapper/lib/HiveApi"
 
