@@ -29,7 +29,7 @@ export default class ApiClient {
 
 
   public static buildPath(path: string, pathParams: Params): string {
-    return path.replace(/\{([\w-]+)\}/g, (fullMatch, key) => {
+    return path.replace(/{([\w-]+)}/g, (fullMatch, key) => {
       let value;
       if (this.objectHasOwnProperty.call(pathParams, key)) {
         value = <string>pathParams[key];
