@@ -1,8 +1,5 @@
 import Axios, { AxiosResponse } from 'axios';
-
-export interface Params {
-  [key: string]: any;
-}
+import {Params} from "../ts/types/api_types";
 
 interface CacheData {
   [key: string]: {
@@ -12,14 +9,14 @@ interface CacheData {
 }
 
 export default class ApiClient {
-  private static basePath: string = 'https://api.playhive.com/v0';
-  private static cacheTimeout: number = 0;
+  private static basePath = 'https://api.playhive.com/v0';
+  private static cacheTimeout = 0;
 
-  public static async callApi(path: string, pathParams: object): Promise<AxiosResponse> {
+  public static async callApi(path: string, pathParams: Params): Promise<AxiosResponse> {
     return await Axios.get(this.buildUrl(path, pathParams));
   }
 
-  public static buildUrl(path: string, pathParams: Params) {
+  public static buildUrl(path: string, pathParams: Params): string {
     if (!path.match(/^\//)) {
       path = '/' + path;
     }
@@ -30,22 +27,12 @@ export default class ApiClient {
     return url;
   }
 
-  public static paramToString(param: any): string {
-    if (param === undefined) {
-      return '';
-    }
-    if (param instanceof Date) {
-      return param.toJSON();
-    }
-
-    return param.toString();
-  }
 
   public static buildPath(path: string, pathParams: Params): string {
     return path.replace(/\{([\w-]+)\}/g, (fullMatch, key) => {
       let value;
-      if (pathParams.hasOwnProperty(key)) {
-        value = ApiClient.paramToString(pathParams[key]);
+      if (this.objectHasOwnProperty.call(pathParams, key)) {
+        value = <string>pathParams[key];
       } else {
         value = fullMatch;
       }
@@ -55,10 +42,10 @@ export default class ApiClient {
   }
 
   private static cacheData: CacheData = {};
-  public static async getData(path: string, pathParams: Params) {
+  public static async getData(path: string, pathParams: Params): Promise<AxiosResponse> {
     const key = ApiClient.buildPath(path, pathParams);
     const now = new Date().getTime();
-    if (this.cacheData.hasOwnProperty(key)) {
+    if (this.objectHasOwnProperty.call(this.cacheData, key)) {
       if (this.cacheData[key].expires < now) {
         this.cacheData[key] = {
           expires: now + this.cacheTimeout * 1000,
@@ -77,7 +64,10 @@ export default class ApiClient {
     return this.cacheData[key].data;
   }
 
-  public static setCacheTimeout(_cacheTimeout: number) {
+  public static setCacheTimeout(_cacheTimeout: number): void {
     this.cacheTimeout = _cacheTimeout;
   }
+
+  // Using this to prevent issues with shadowed methods
+  public static objectHasOwnProperty = Object.prototype.hasOwnProperty;
 }

@@ -1,6 +1,6 @@
 {
   "name": "hive-tools-wrapper",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Advanced Hive Bedrock API wrapper with caching.",
   "main": "HiveApi.js",
   "types": "HiveApi.d.ts",
@@ -13,6 +13,9 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.0",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
+    "eslint": "^7.3.0",
     "jest": "^26.0.1",
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.0",
@@ -23,7 +26,7 @@
     "test": "jest --config jestconfig.json",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "version": "npm run format && git add -A src"

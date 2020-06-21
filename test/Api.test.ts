@@ -2,7 +2,7 @@ import ApiClient from "../src/api/ApiClient";
 import HiveApi from "../src/HiveApi";
 
 test('path builder works correctly', async () => {
-    let params = {
+    const params = {
         'test': "test1",
         'empty': ""
     };
@@ -10,28 +10,28 @@ test('path builder works correctly', async () => {
 });
 
 test('cache gets new data', async () => {
-    let params = {
+    const params = {
         'game': "wars"
     };
-    let response = await ApiClient.getData("/game/all/{game}", params);
+    const response = await ApiClient.getData("/game/all/{game}", params);
     expect(response.status).toBe(200);
 });
 
 test('extra stats calculations work', async () => {
-    let response = await HiveApi.getAllTimePlayerStatistics("wars", "NeutronicMC");
+    const response = await HiveApi.getAllTimePlayerStatistics("wars", "NeutronicMC");
     expect(response.kdr).toBeDefined();
 });
 
 test('cache returns cached data', async () => {
-    let params = {
+    const params = {
         'game': "wars"
     };
 
     ApiClient.setCacheTimeout(300);
     await ApiClient.getData("/game/all/{game}", params);
-    let start = new Date().getTime();
+    const start = new Date().getTime();
     await ApiClient.getData("/game/all/{game}", params);
-    let diff = (new Date().getTime()) - start;
+    const diff = (new Date().getTime()) - start;
 
     expect(diff).toBeLessThan(5);
 });
