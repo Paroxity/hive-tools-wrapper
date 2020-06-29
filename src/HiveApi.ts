@@ -13,7 +13,7 @@ export default class HiveToolsAPI extends ApiClient {
             game,
         };
         const response = await this.getData('/game/monthly/{game}', params);
-        return this.calculateExtraLeaderboardStats(response.data);
+        return this.calculateExtraLeaderboardStats(response.data, game, "monthly");
     }
 
     public static async getSpecificMonthlyLeaderboard(
@@ -32,7 +32,7 @@ export default class HiveToolsAPI extends ApiClient {
         };
         const response = await this.getData('/game/monthly/{game}/{year}/{month}/{amount}/{skip}', params);
 
-        return this.calculateExtraLeaderboardStats(response.data);
+        return this.calculateExtraLeaderboardStats(response.data, game, "monthly");
     }
 
     public static async getMonthlyPlayerStatistics(game: string, player: string): Promise<PlayerData> {
@@ -41,7 +41,7 @@ export default class HiveToolsAPI extends ApiClient {
             player,
         };
         const response = await this.getData('/game/monthly/player/{game}/{player}', params);
-        return this.calculateExtraPlayerStats(response.data);
+        return this.calculateExtraPlayerStats(response.data, game, "monthly");
     }
 
     public static async getSpecificMonthlyPlayerStatistics(
@@ -57,7 +57,7 @@ export default class HiveToolsAPI extends ApiClient {
             month,
         };
         const response = await this.getData('/game/monthly/player/{game}/{player}/{year}/{month}', params);
-        return this.calculateExtraPlayerStats(response.data);
+        return this.calculateExtraPlayerStats(response.data, game, "monthly");
     }
 
     public static async getAllTimeLeaderboard(game: string): Promise<LeaderboardData> {
@@ -65,7 +65,7 @@ export default class HiveToolsAPI extends ApiClient {
             game,
         };
         const response = await this.getData('/game/monthly/player/{game}/{player}/{year}/{month}', params);
-        return this.calculateExtraLeaderboardStats(response.data);
+        return this.calculateExtraLeaderboardStats(response.data, game, "all");
     }
 
     public static async getAllTimePlayerStatistics(game: string, player: string): Promise<PlayerData> {
@@ -74,11 +74,11 @@ export default class HiveToolsAPI extends ApiClient {
             player,
         };
         const response = await this.getData('/game/all/{game}/{player}', params);
-        return this.calculateExtraPlayerStats(response.data);
+        return this.calculateExtraPlayerStats(response.data, game, "all");
     }
 
     // Calculate extra statistics for a player. There are many obscure calculations for the Hive Tools website.
-    public static calculateExtraPlayerStats(data: PlayerData): PlayerData {
+    public static calculateExtraPlayerStats(data: PlayerData, game: string, time: string): PlayerData {
         ({
             win_percentage: data.win_percentage,
             win_percentage_raw: data.win_percentage_raw,
@@ -141,12 +141,17 @@ export default class HiveToolsAPI extends ApiClient {
         if (this.objectHasOwnProperty.call(data, "checkpoints")) {
             data.cdr = <number>data.checkpoints / <number>data.deaths;
         }
+
+        if (time === "all") {
+            data.level = this.getLevel(game, <number>data.xp);
+        }
+
         return data;
     }
 
-    public static calculateExtraLeaderboardStats(data: LeaderboardData): LeaderboardData {
+    public static calculateExtraLeaderboardStats(data: LeaderboardData, game: string, time: string): LeaderboardData {
         data.forEach((player, index) => {
-            data[index] = this.calculateExtraPlayerStats(player);
+            data[index] = this.calculateExtraPlayerStats(player, game, time);
         });
 
         return data;
@@ -165,5 +170,40 @@ export default class HiveToolsAPI extends ApiClient {
         returnData.games_lost = <number>data.played - <number>data.victories;
 
         return returnData;
+    }
+
+    private static getLevel(game: string, xp: number): number {
+        let level = 0;
+        switch(game) {
+            case "wars":
+                if (xp >= 198900) {
+                    level += 52;
+                    xp -= 198900;
+                    level += xp/7650;
+                } else {
+                    level = ((-75+Math.sqrt(5625+300*xp))/150)+1;
+                }
+                break;
+            case "sky":
+                level = (75 + Math.sqrt(5625+300*xp))/150;
+                break;
+            case "sg":
+                level = (75 + Math.sqrt(5625+300*xp))/150;
+                break;
+            case "murder":
+                if (xp >= 332100) {
+                    level = (xp-332100)/8100 + 82;
+                } else {
+                    level = ((-5 + Math.sqrt(2*(xp)+25))/10)+1;
+                }
+                break;
+            case "dr":
+                level = (-5+Math.sqrt(xp+25))/10+1;
+                break;
+            case "hide":
+                level = (5 + Math.sqrt(2*xp+25))/10;
+                break;
+        }
+        return level;
     }
 }
