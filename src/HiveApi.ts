@@ -64,7 +64,7 @@ export default class HiveToolsAPI extends ApiClient {
         const params = {
             game,
         };
-        const response = await this.getData('/game/monthly/player/{game}/{player}/{year}/{month}', params);
+        const response = await this.getData('/game/all/{game}', params);
         return this.calculateExtraLeaderboardStats(response.data, game, "all");
     }
 

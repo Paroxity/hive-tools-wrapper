@@ -35,3 +35,9 @@ test('cache returns cached data', async () => {
 
     expect(diff).toBeLessThan(5);
 });
+
+test('all time api returns correct data', async () => {
+    let data = await HiveApi.getAllTimeLeaderboard("wars");
+
+    expect(data).toBeLessThan(5);
+});
