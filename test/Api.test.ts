@@ -35,8 +35,3 @@ test('cache returns cached data', async () => {
 
     expect(diff).toBeLessThan(5);
 });
-
-test('efficiency???', async () => {
-    const response = await HiveApi.getAllTimePlayerStatistics("murder", "SirUntouchable0");
-    expect(response.efficiency).toBe(0);
-});
