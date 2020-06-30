@@ -98,7 +98,7 @@ export default class HiveToolsAPI extends ApiClient {
             data.kpr = kills / <number>data.played;
 
             if (this.objectHasOwnProperty.call(data, "deaths")) {
-                data.dpr = <number>data.deaths / <number>data.played;
+                data.rpd = <number>data.played / <number>data.deaths;
                 if (data.deaths === 0) {
                     data.kdr = kills;
                     if (this.objectHasOwnProperty.call(data, "seeker_kills")) {
