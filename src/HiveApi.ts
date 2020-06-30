@@ -131,7 +131,7 @@ export default class HiveToolsAPI extends ApiClient {
 
             // Just in case a new game ever has the "coins" statistic
             if (this.objectHasOwnProperty.call(data, "murderer_eliminations")) {
-                data.efficiency = <number>data.murderer_eliminations / (10 / <number>data.coins);
+                data.efficiency = <number>data.murderer_eliminations / 10 / <number>data.coins;
             }
         }
 
