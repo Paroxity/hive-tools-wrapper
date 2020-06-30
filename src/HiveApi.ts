@@ -157,7 +157,7 @@ export default class HiveToolsAPI extends ApiClient {
         return data;
     }
 
-    private static calculateWinLossInfo(data: PlayerData): CalculatedWinData {
+    public static calculateWinLossInfo(data: PlayerData): CalculatedWinData {
         const returnData: CalculatedWinData = {
             win_percentage: "0%",
             win_percentage_raw: 0,
@@ -165,7 +165,10 @@ export default class HiveToolsAPI extends ApiClient {
         };
         if (data.victories !== 0) {
             returnData.win_percentage_raw = <number>data.victories / <number>data.played;
-            returnData.win_percentage = `${(<number>data.win_percentage_raw * 100).toFixed(2)}%`;
+            if (Number.isNaN(returnData.win_percentage_raw)) {
+                returnData.win_percentage_raw = 0;
+            }
+            returnData.win_percentage = `${(<number>returnData.win_percentage_raw * 100).toFixed(2)}%`;
         }
         returnData.games_lost = <number>data.played - <number>data.victories;
 
