@@ -98,7 +98,6 @@ export default class HiveToolsAPI extends ApiClient {
             data.kpr = kills / <number>data.played;
 
             if (this.objectHasOwnProperty.call(data, "deaths")) {
-                data.rpd = <number>data.played / <number>data.deaths;
                 if (data.deaths === 0) {
                     data.kdr = kills;
                     if (this.objectHasOwnProperty.call(data, "seeker_kills")) {
@@ -124,13 +123,15 @@ export default class HiveToolsAPI extends ApiClient {
                 }
             }
         }
-
+        if (this.objectHasOwnProperty.call(data, "deaths")) {
+            data.rpd = <number>data.played / <number>data.deaths;
+        }
         if (this.objectHasOwnProperty.call(data, "coins")) {
             data.cpr = <number>data.coins / <number>data.played;
 
             // Just in case a new game ever has the "coins" statistic
             if (this.objectHasOwnProperty.call(data, "murderer_eliminations")) {
-                data.efficiency = <number>data.murderer_eliminations / (<number>data.coins / 10);
+                data.efficiency = <number>data.murderer_eliminations / (10 / <number>data.coins);
             }
         }
 
