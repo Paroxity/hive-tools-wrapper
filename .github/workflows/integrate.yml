@@ -9,5 +9,3 @@ jobs:
         run: yarn
       - name: Run ESLint
         run: npm run lint
-      - name: Run tests
-        run: npm test
