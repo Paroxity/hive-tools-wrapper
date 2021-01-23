@@ -1,7 +1,7 @@
 import Axios from "axios";
 import NodeCache from "node-cache";
 
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 300 });
+const cache = new NodeCache({stdTTL: 300, checkperiod: 300});
 
 const API_URL = "https://api.playhive.com/v0";
 
@@ -54,7 +54,7 @@ export async function getMonthlyLeaderboard(game, year, month, amount, skip) {
 			});
 		}
 	} else {
-		data = await fetchData("/game/monthly/{game}", { game });
+		data = await fetchData("/game/monthly/{game}", {game});
 	}
 	return data.map(player =>
 		calculateExtraStats(player, game, TIME_SCOPE_MONTHLY)
@@ -67,7 +67,7 @@ export async function getMonthlyLeaderboard(game, year, month, amount, skip) {
  * @returns {Promise<Object>} All-time leaderboard
  */
 export async function getAllTimeLeaderboard(game) {
-	return (await fetchData("/game/all/{game}", { game })).map(player =>
+	return (await fetchData("/game/all/{game}", {game})).map(player =>
 		calculateExtraStats(player, game, TIME_SCOPE_ALL)
 	);
 }
@@ -175,7 +175,7 @@ function calculateLevel(game, xp) {
 	let flattenLevel = GAME_XP[game][1];
 	let level =
 		(-increment + Math.sqrt(Math.pow(increment, 2) - 4 * increment * -xp)) /
-			(2 * increment) +
+		(2 * increment) +
 		1;
 	if (flattenLevel && level > flattenLevel)
 		level =
@@ -183,7 +183,7 @@ function calculateLevel(game, xp) {
 			(xp -
 				(increment * Math.pow(flattenLevel - 1, 2) +
 					(flattenLevel - 1) * increment)) /
-				((flattenLevel - 1) * increment * 2);
+			((flattenLevel - 1) * increment * 2);
 	return level;
 }
 
@@ -194,11 +194,12 @@ function calculateLevel(game, xp) {
  * @returns {Promise<any>} API data
  */
 async function fetchData(path, pathParams) {
+	path = buildUrl(path, pathParams);
 	let response = cache.get(path);
 	if (response === undefined) {
 		response = {};
 		try {
-			response = (await Axios.get(buildUrl(path, pathParams))).data;
+			response = (await Axios.get(path)).data;
 		} catch (e) {
 			if (e.response.status === 429) {
 				response = e.response;
@@ -207,16 +208,20 @@ async function fetchData(path, pathParams) {
 						await new Promise(r =>
 							setTimeout(r, response.headers["retry-after"] * 1000)
 						);
-						response = (await Axios.get(buildUrl(path, pathParams))).data;
+						try {
+							response = (await Axios.get(path)).data;
+						} catch (e) {
+							console.log(e);
+						}
 					}
 				} else {
 					await new Promise(r => setTimeout(r, 60000));
-					response = (await Axios.get(buildUrl(path, pathParams))).data;
+					response = (await Axios.get(path)).data;
 				}
 			}
 		}
+		cache.set(path, response);
 	}
-	cache.set(path, response);
 	return response;
 }
 
