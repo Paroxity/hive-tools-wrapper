@@ -134,7 +134,7 @@ function calculateExtraStats(data, game, timeScope) {
 			data.win_percentage = `${(data.win_percentage_raw * 100).toFixed(2)}%`;
 		}
 
-		let kills = data.kills ?? data.hider_kills;
+		let kills = data.kills ? data.kills : data.hider_kills;
 		if (kills !== undefined) data.kpr = kills / data.played;
 		if ("deaths" in data) {
 			data.rpd = data.played / data.deaths;
