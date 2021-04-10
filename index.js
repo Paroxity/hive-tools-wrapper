@@ -1,5 +1,5 @@
-import Axios from "axios";
-import NodeCache from "node-cache";
+const Axios = require("axios");
+const NodeCache = require("node-cache");
 
 const cache = new NodeCache({stdTTL: 300, checkperiod: 300});
 
@@ -31,7 +31,7 @@ const GAME_XP = {
  * @param {number=} skip Number of entries to skip
  * @returns {Promise<Object>} Monthly leaderboard
  */
-export async function getMonthlyLeaderboard(game, year, month, amount, skip) {
+async function getMonthlyLeaderboard(game, year, month, amount, skip) {
 	let data;
 
 	if (year && month) {
@@ -66,7 +66,7 @@ export async function getMonthlyLeaderboard(game, year, month, amount, skip) {
  * @param {string} game
  * @returns {Promise<Object>} All-time leaderboard
  */
-export async function getAllTimeLeaderboard(game) {
+async function getAllTimeLeaderboard(game) {
 	return (await fetchData("/game/all/{game}", {game})).map(player =>
 		calculateExtraStats(player, game, TIME_SCOPE_ALL)
 	);
@@ -80,7 +80,7 @@ export async function getAllTimeLeaderboard(game) {
  * @param {number=} month
  * @returns {Promise<Object>} Monthly player statistics
  */
-export async function getMonthlyPlayerStats(identifier, game, year, month) {
+async function getMonthlyPlayerStats(identifier, game, year, month) {
 	let data;
 
 	if (year && month) {
@@ -108,7 +108,7 @@ export async function getMonthlyPlayerStats(identifier, game, year, month) {
  * @param {string} game
  * @returns {Promise<Object>} All-time player statistics
  */
-export async function getAllTimePlayerStats(identifier, game) {
+async function getAllTimePlayerStats(identifier, game) {
 	return calculateExtraStats(
 		await fetchData("/game/all/{game}/{identifier}", {
 			game,
@@ -237,4 +237,11 @@ function buildUrl(path, params) {
 			return encodeURIComponent(params[key]);
 		})
 	);
+}
+
+module.exports = {
+	getMonthlyLeaderboard,
+	getAllTimeLeaderboard,
+	getMonthlyPlayerStats,
+	getAllTimePlayerStats
 }

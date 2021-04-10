@@ -1,7 +1,6 @@
 {
-	"type": "module",
 	"name": "hive-tools-wrapper",
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"description": "Advanced Hive Bedrock API wrapper with caching.",
 	"main": "./index.js",
 	"dependencies": {
