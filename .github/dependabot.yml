@@ -6,10 +6,4 @@ updates:
     interval: weekly
     time: "00:00"
     timezone: America/Los_Angeles
-  open-pull-requests-limit: 99
-  ignore:
-  - dependency-name: eslint
-    versions:
-    - 7.19.0
-    - 7.21.0
-    - 7.24.0
+  versioning-strategy: increase
