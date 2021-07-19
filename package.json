@@ -11,7 +11,7 @@
 		"prepublishOnly": "eslint ."
 	},
 	"devDependencies": {
-		"eslint": "^7.25.0",
+		"eslint": "^7.31.0",
 		"prettier": "^2.2.1"
 	},
 	"repository": {
