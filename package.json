@@ -4,7 +4,7 @@
 	"description": "Advanced Hive Bedrock API wrapper with caching.",
 	"main": "./index.js",
 	"dependencies": {
-		"axios": "^0.21.1",
+		"axios": "^0.21.4",
 		"node-cache": "^5.1.2"
 	},
 	"scripts": {
