@@ -4,15 +4,15 @@
 	"description": "Advanced Hive Bedrock API wrapper with caching.",
 	"main": "./index.js",
 	"dependencies": {
-		"axios": "^0.21.1",
+		"axios": "^0.22.0",
 		"node-cache": "^5.1.2"
 	},
 	"scripts": {
 		"prepublishOnly": "eslint ."
 	},
 	"devDependencies": {
-		"eslint": "^7.25.0",
-		"prettier": "^2.2.1"
+		"eslint": "^8.0.0",
+		"prettier": "^2.4.1"
 	},
 	"repository": {
 		"type": "git",
