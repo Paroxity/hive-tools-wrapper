@@ -18,7 +18,7 @@ const GAME_XP = {
 	hide: [100],
 	murder: [100, 82],
 	sg: [150],
-	sky: [150],
+	sky: [150, 52],
 	build: [100]
 };
 
