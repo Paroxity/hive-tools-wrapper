@@ -19,7 +19,8 @@ const GAME_XP = {
 	murder: [100, 82],
 	sg: [150],
 	sky: [150, 52],
-	build: [100]
+	build: [100],
+	ctf: [150]
 };
 
 /**
