@@ -21,7 +21,7 @@ const GAME_XP = {
 	sky: [150, 52],
 	build: [100],
 	ground: [150],
-	drop: [150],
+	drop: [150, 22],
 	ctf: [150]
 };
 
