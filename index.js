@@ -20,6 +20,8 @@ const GAME_XP = {
 	sg: [150],
 	sky: [150, 52],
 	build: [100],
+	ground: [150],
+	drop: [150],
 	ctf: [150]
 };
 
