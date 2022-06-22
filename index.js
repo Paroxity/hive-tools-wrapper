@@ -151,8 +151,10 @@ function calculateExtraStats(data, game, timeScope) {
 				if (kills !== undefined)
 					data.kdr = parseFloat((kills / data.deaths).toFixed(2));
 				if ("seeker_kills" in data) data.skdr = data.seeker_kills / data.deaths;
-				if ("final_kills" in data)
+				if ("final_kills" in data) {
 					data.fkdr = parseFloat((data.final_kills / data.deaths).toFixed(2));
+                                        data.fkpr = parseFloat((data.final_kills / data.played).toFixed(2));
+                                }
 				if ("treasure_destroyed" in data)
 					data.ddr = data.treasure_destroyed / data.deaths;
 			}
