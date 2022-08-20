@@ -1,6 +1,6 @@
 {
 	"name": "hive-tools-wrapper",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"description": "Advanced Hive Bedrock API wrapper with caching.",
 	"main": "./index.js",
 	"dependencies": {
@@ -12,7 +12,7 @@
 	},
 	"devDependencies": {
 		"eslint": "^8.22.0",
-		"prettier": "^2.6.2"
+		"prettier": "^2.7.1"
 	},
 	"repository": {
 		"type": "git",

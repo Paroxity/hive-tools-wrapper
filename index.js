@@ -14,7 +14,7 @@ const TIME_SCOPE_MONTHLY = "monthly";
  */
 const GAME_XP = {
 	wars: [150, 52],
-	dr: [200],
+	dr: [200, 42],
 	hide: [100],
 	murder: [100, 82],
 	sg: [150],
