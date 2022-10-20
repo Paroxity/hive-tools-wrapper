@@ -1,7 +1,16 @@
 import axios from "axios";
 import { setupCache } from "axios-cache-adapter";
-import { AllTimeLeaderboard, AllTimePlayer, Game, MonthlyLeaderboard, MonthlyPlayer } from "./games/data";
-import { AllTimeStatsProcessors, MonthlyStatsProcessors } from "./games/processors";
+import {
+	AllTimeLeaderboard,
+	AllTimePlayer,
+	Game,
+	MonthlyLeaderboard,
+	MonthlyPlayer
+} from "./games/data";
+import {
+	AllTimeStatsProcessors,
+	MonthlyStatsProcessors
+} from "./games/processors";
 
 const cache = setupCache({
 	maxAge: 5 * 60 * 1000
@@ -24,8 +33,8 @@ async function fetchData<T>(
 			const response = e.response;
 			if (response?.status === 429) {
 				const timeout = response?.headers["retry-after"];
-				if (typeof timeout === "number") {
-					await new Promise(r => setTimeout(r, timeout * 1000));
+				if (typeof timeout === "string") {
+					await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
 					return fetchData(url, controller);
 				}
 			}
@@ -80,7 +89,9 @@ export async function getMonthlyLeaderboard<T extends Game>(
 	}
 
 	const data: MonthlyLeaderboard[T] = await fetchData(url, controller);
-	MonthlyStatsProcessors[game].forEach(processor => data.forEach(d => processor(d)));
+	MonthlyStatsProcessors[game].forEach(processor =>
+		data.forEach(d => processor(d))
+	);
 	return data;
 }
 
@@ -92,6 +103,12 @@ export async function getAllTimeLeaderboard<T extends Game>(
 		`/game/all/${game}`,
 		controller
 	);
-	AllTimeStatsProcessors[game].forEach(processor => data.forEach(d => processor(d)));
+	AllTimeStatsProcessors[game].forEach(processor =>
+		data.forEach(d => processor(d))
+	);
 	return data;
 }
+
+export * from "./games/data";
+export * from "./games/info";
+export * from "./games/processors";
