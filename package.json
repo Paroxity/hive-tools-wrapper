@@ -1,34 +1,35 @@
 {
 	"name": "hive-tools-wrapper",
-	"version": "2.2.1",
-	"description": "Advanced Hive Bedrock API wrapper with caching.",
-	"main": "./index.js",
-	"dependencies": {
-		"axios": "^1.1.2",
-		"node-cache": "^5.1.2"
-	},
+	"version": "3.0.0",
+	"description": "Type-safe wrapper for the Hive Bedrock API",
+	"main": "dist/index.js",
 	"scripts": {
-		"prepublishOnly": "eslint ."
+		"build": "tsc",
+		"lint": "eslint src"
 	},
-	"devDependencies": {
-		"eslint": "^8.25.0",
-		"prettier": "^2.7.1"
-	},
+	"keywords": [
+		"hivemc",
+		"playhive"
+	],
+	"author": "Paroxity",
+	"license": "Apache-2.0",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Paroxity/hive-tools-wrapper.git"
 	},
-	"keywords": [
-		"hive",
-		"wrapper",
-		"api",
-		"bedrock",
-		"minecraft"
-	],
-	"author": "paroxity",
-	"license": "Apache-2.0",
 	"bugs": {
 		"url": "https://github.com/Paroxity/hive-tools-wrapper/issues"
 	},
-	"homepage": "https://github.com/Paroxity/hive-tools-wrapper"
+	"homepage": "https://github.com/Paroxity/hive-tools-wrapper",
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^5.40.1",
+		"@typescript-eslint/parser": "^5.40.1",
+		"eslint": "^8.25.0",
+		"prettier": "^2.7.1",
+		"typescript": "^4.8.4"
+	},
+	"dependencies": {
+		"axios": "^1.1.3",
+		"axios-cache-adapter": "^2.7.3"
+	}
 }
