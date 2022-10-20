@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"esModuleInterop": true,
+		"lib": ["es2017", "dom"],
 		"module": "commonjs",
 		"outDir": "dist",
 		"skipLibCheck": true,

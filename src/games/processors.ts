@@ -1,4 +1,12 @@
-import { AllTimePlayer, BaseGameData, Game, GameData, GameInfo, MonthlyPlayer, PvPGameData } from "./data";
+import {
+	AllTimePlayer,
+	BaseGameData,
+	Game,
+	GameData,
+	MonthlyPlayer,
+	PvPGameData
+} from "./data";
+import { GameInfo } from "./info";
 
 const commonProcessedStats: ((stats: BaseGameData) => void)[] = [
 	stats => {
