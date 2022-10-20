@@ -24,7 +24,16 @@ const kdrProcessedStat = (stats: PvPGameData) => {
 const StatsProcessors: {
 	[K in Game]: ((stats: GameData[K]) => void)[];
 } = {
-	[Game.TreasureWars]: [...commonProcessedStats, kdrProcessedStat],
+	[Game.TreasureWars]: [
+		...commonProcessedStats,
+		kdrProcessedStat,
+		(stats: GameData[Game.TreasureWars]) => {
+			stats.fkdr =
+				stats.deaths === 0
+					? stats.final_kills
+					: stats.final_kills / stats.deaths;
+		}
+	],
 	[Game.DeathRun]: commonProcessedStats,
 	[Game.HideAndSeek]: commonProcessedStats,
 	[Game.MurderMystery]: commonProcessedStats,
