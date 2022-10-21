@@ -108,8 +108,7 @@ type Player<T> = {
 };
 export type MonthlyPlayer = Player<MonthlyGameData>;
 export type AllTimePlayer = Player<AllTimeGameData> & {
-	[Game.TreasureWars]: GameData[Game.TreasureWars] &
-		AllTimeGameData & { prestige: number };
+	[G in Game.TreasureWars]: { prestige: number };
 };
 
 export type MonthlyLeaderboard = {
