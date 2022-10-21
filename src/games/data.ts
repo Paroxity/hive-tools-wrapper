@@ -28,7 +28,7 @@ export type PvPGameData = {
 export type MonthlyGameData = {
 	username: string;
 	uncapped_xp: number;
-};
+} & LeaderboardGameData;
 
 export type AllTimeGameData = {
 	UUID: string;
@@ -113,7 +113,7 @@ export type AllTimePlayer = Player<AllTimeGameData> & {
 };
 
 export type MonthlyLeaderboard = {
-	[G in Game]: (MonthlyPlayer[G] & LeaderboardGameData)[];
+	[G in Game]: MonthlyPlayer[G][];
 };
 export type AllTimeLeaderboard = {
 	[G in Game]: (AllTimePlayer[G] & LeaderboardGameData)[];
