@@ -113,7 +113,8 @@ type GamePlayerInner<P extends Player> = {
 export type GamePlayer<
 	G extends Game,
 	P extends Player = any
-> = GamePlayerInner<P>[G];
+> = GamePlayerInner<P>[G] &
+	(P extends MonthlyPlayer ? LeaderboardGameData : {});
 
 export type GameLeaderboard<
 	G extends Game,
