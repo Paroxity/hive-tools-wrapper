@@ -1,5 +1,4 @@
-import axios from "axios";
-import { setupCache } from "axios-cache-adapter";
+import axios, { AxiosResponse } from "axios";
 import {
 	AllTimeLeaderboard,
 	AllTimePlayer,
@@ -12,23 +11,35 @@ import {
 	MonthlyStatsProcessors
 } from "./games/processors";
 
-const cache = setupCache({
-	maxAge: 5 * 60 * 1000
-});
-const request = axios.create({
-	adapter: cache.adapter
-});
+const cachedResponses: {
+	[key: string]: {
+		response: Promise<AxiosResponse<any>>;
+		time: number;
+	};
+} = {};
 
 async function fetchData<T>(
 	url: string,
 	controller?: AbortController
 ): Promise<T> {
 	try {
-		const response = await request.get("https://api.playhive.com/v0" + url, {
-			signal: controller?.signal
-		});
-		return response.data;
+		if (cachedResponses[url]) {
+			if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000) {
+				return (await cachedResponses[url].response).data;
+			}
+			delete cachedResponses[url];
+		}
+		cachedResponses[url] = {
+			response: axios.get("https://api.playhive.com/v0" + url, {
+				signal: controller?.signal
+			}),
+			time: Date.now()
+		};
+		const { data } = await cachedResponses[url].response;
+		cachedResponses[url].time = Date.now();
+		return data;
 	} catch (e) {
+		delete cachedResponses[url];
 		if (axios.isAxiosError(e)) {
 			const response = e.response;
 			if (response?.status === 429) {
@@ -112,3 +123,4 @@ export async function getAllTimeLeaderboard<T extends Game>(
 export * from "./games/data";
 export * from "./games/info";
 export * from "./games/processors";
+
