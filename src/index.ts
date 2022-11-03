@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import {
-	AllTimeLeaderboard,
 	AllTimePlayer,
 	Game,
-	MonthlyLeaderboard,
+	GameLeaderboard,
+	GamePlayer,
 	MonthlyPlayer
 } from "./games/data";
 import {
@@ -54,27 +54,27 @@ async function fetchData<T>(
 	}
 }
 
-export async function getMonthlyStats<T extends Game>(
+export async function getMonthlyStats<G extends Game>(
 	identifier: string,
-	game: T,
+	game: G,
 	year?: number,
 	month?: number,
 	controller?: AbortController
-): Promise<MonthlyPlayer[T]> {
+): Promise<GamePlayer<G, MonthlyPlayer>> {
 	let url = `/game/monthly/player/${game}/${identifier}`;
 	if (year && month) url += `/${year}/${month}`;
 
-	const data: MonthlyPlayer[T] = await fetchData(url, controller);
+	const data: GamePlayer<G, MonthlyPlayer> = await fetchData(url, controller);
 	MonthlyStatsProcessors[game].forEach(processor => processor(data));
 	return data;
 }
 
-export async function getAllTimeStats<T extends Game>(
+export async function getAllTimeStats<G extends Game>(
 	identifier: string,
-	game: T,
+	game: G,
 	controller?: AbortController
-): Promise<AllTimePlayer[T]> {
-	const data: AllTimePlayer[T] = await fetchData(
+): Promise<GamePlayer<G, AllTimePlayer>> {
+	const data: GamePlayer<G, AllTimePlayer> = await fetchData(
 		`/game/all/${game}/${identifier}`,
 		controller
 	);
@@ -82,14 +82,14 @@ export async function getAllTimeStats<T extends Game>(
 	return data;
 }
 
-export async function getMonthlyLeaderboard<T extends Game>(
-	game: T,
+export async function getMonthlyLeaderboard<G extends Game>(
+	game: G,
 	year?: number,
 	month?: number,
 	amount?: number,
 	skip?: number,
 	controller?: AbortController
-): Promise<MonthlyLeaderboard[T]> {
+): Promise<GameLeaderboard<G, MonthlyPlayer>> {
 	let url = `/game/monthly/${game}`;
 	if (year && month) {
 		url += `/${year}/${month}`;
@@ -99,18 +99,21 @@ export async function getMonthlyLeaderboard<T extends Game>(
 		}
 	}
 
-	const data: MonthlyLeaderboard[T] = await fetchData(url, controller);
+	const data: GameLeaderboard<G, MonthlyPlayer> = await fetchData(
+		url,
+		controller
+	);
 	MonthlyStatsProcessors[game].forEach(processor =>
 		data.forEach(d => processor(d))
 	);
 	return data;
 }
 
-export async function getAllTimeLeaderboard<T extends Game>(
-	game: T,
+export async function getAllTimeLeaderboard<G extends Game>(
+	game: G,
 	controller?: AbortController
-): Promise<AllTimeLeaderboard[T]> {
-	const data: AllTimeLeaderboard[T] = await fetchData(
+): Promise<GameLeaderboard<G, AllTimePlayer>> {
+	const data: GameLeaderboard<G, AllTimePlayer> = await fetchData(
 		`/game/all/${game}`,
 		controller
 	);

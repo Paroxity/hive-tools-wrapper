@@ -1,14 +1,14 @@
 import {
 	AllTimePlayer,
-	BaseGameData,
 	Game,
-	GameData,
+	GamePlayer,
 	MonthlyPlayer,
+	Player,
 	PvPGameData
 } from "./data";
 import { GameInfo } from "./info";
 
-const commonProcessedStats: ((stats: BaseGameData) => void)[] = [
+const commonProcessedStats: ((stats: Player) => void)[] = [
 	stats => {
 		stats.losses = stats.played - stats.victories;
 	},
@@ -22,12 +22,12 @@ const kdrProcessedStat = (stats: PvPGameData) => {
 };
 
 const StatsProcessors: {
-	[K in Game]: ((stats: GameData[K]) => void)[];
+	[G in Game]: ((stats: GamePlayer<G>) => void)[];
 } = {
 	[Game.TreasureWars]: [
 		...commonProcessedStats,
 		kdrProcessedStat,
-		(stats: GameData[Game.TreasureWars]) => {
+		stats => {
 			stats.fkdr =
 				stats.deaths === 0
 					? stats.final_kills
@@ -45,10 +45,10 @@ const StatsProcessors: {
 	[Game.CaptureTheFlag]: [...commonProcessedStats, kdrProcessedStat]
 };
 export const MonthlyStatsProcessors: {
-	[K in Game]: ((stats: MonthlyPlayer[K]) => void)[];
+	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
 } = StatsProcessors;
 export const AllTimeStatsProcessors: {
-	[K in Game]: ((stats: AllTimePlayer[K]) => void)[];
+	[G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[];
 } = StatsProcessors;
 Object.entries(AllTimeStatsProcessors).forEach(([game, processors]) => {
 	processors.push(stats => {
