@@ -21,8 +21,8 @@ const kdrProcessedStat = (stats: PvPGameData) => {
 	stats.kdr = stats.deaths === 0 ? stats.kills : stats.kills / stats.deaths;
 };
 
-const StatsProcessors: {
-	[G in Game]: ((stats: GamePlayer<G>) => void)[];
+export const MonthlyStatsProcessors: {
+	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
 } = {
 	[Game.TreasureWars]: [
 		...commonProcessedStats,
@@ -44,17 +44,19 @@ const StatsProcessors: {
 	[Game.BlockDrop]: commonProcessedStats,
 	[Game.CaptureTheFlag]: [...commonProcessedStats, kdrProcessedStat]
 };
-export const MonthlyStatsProcessors: {
-	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
-} = StatsProcessors;
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[];
-} = StatsProcessors;
-Object.entries(AllTimeStatsProcessors).forEach(([game, processors]) => {
-	processors.push(stats => {
-		stats.level = calculateLevel(game as Game, stats.xp);
-	});
-});
+} = Object.entries(MonthlyStatsProcessors).reduce(
+	(acc, [game, processors]) => ({
+		...acc,
+		[game]: [
+			...processors,
+			(stats: AllTimePlayer) =>
+				(stats.level = calculateLevel(game as Game, stats.xp))
+		]
+	}),
+	{} as { [G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[] }
+);
 
 function calculateLevel(game: Game, xp: number) {
 	const increment = GameInfo[game].levels.increment / 2;
