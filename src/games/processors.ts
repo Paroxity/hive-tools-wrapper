@@ -42,6 +42,10 @@ export const MonthlyStatsProcessors: {
 				stats.deaths === 0
 					? stats.final_kills
 					: parseFloat((stats.final_kills / stats.deaths).toFixed(2));
+			stats.fkpr =
+				stats.played === 0
+					? stats.final_kills
+					: parseFloat((stats.final_kills / stats.played).toFixed(2));
 		},
 		...commonProcessedStats
 	],

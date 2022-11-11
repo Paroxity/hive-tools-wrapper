@@ -53,6 +53,7 @@ type GamePlayerInner<P extends Player> = {
 		PrestigeGameData<P> & {
 			final_kills: number;
 			fkdr: number;
+			fkpr: number;
 			treasure_destroyed: number;
 		};
 	[Game.DeathRun]: P & {
