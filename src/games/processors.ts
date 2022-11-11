@@ -15,6 +15,11 @@ const commonProcessedStats: ((stats: Player) => void)[] = [
 	stats => {
 		stats.win_percentage =
 			stats.played === 0 ? 0 : stats.victories / stats.played;
+	},
+	stats => {
+		Object.entries(stats).forEach(([key, value]) => {
+			if (Number.isNaN(value)) delete stats[key as keyof Player];
+		});
 	}
 ];
 const kdrProcessedStat = (stats: PvPGameData) => {
@@ -25,24 +30,24 @@ export const MonthlyStatsProcessors: {
 	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
 } = {
 	[Game.TreasureWars]: [
-		...commonProcessedStats,
 		kdrProcessedStat,
 		stats => {
 			stats.fkdr =
 				stats.deaths === 0
 					? stats.final_kills
 					: stats.final_kills / stats.deaths;
-		}
+		},
+		...commonProcessedStats
 	],
 	[Game.DeathRun]: commonProcessedStats,
 	[Game.HideAndSeek]: commonProcessedStats,
 	[Game.MurderMystery]: commonProcessedStats,
-	[Game.SurvivalGames]: [...commonProcessedStats, kdrProcessedStat],
-	[Game.SkyWars]: [...commonProcessedStats, kdrProcessedStat],
+	[Game.SurvivalGames]: [kdrProcessedStat, ...commonProcessedStats],
+	[Game.SkyWars]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.JustBuild]: commonProcessedStats,
-	[Game.GroundWars]: [...commonProcessedStats, kdrProcessedStat],
+	[Game.GroundWars]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.BlockDrop]: commonProcessedStats,
-	[Game.CaptureTheFlag]: [...commonProcessedStats, kdrProcessedStat]
+	[Game.CaptureTheFlag]: [kdrProcessedStat, ...commonProcessedStats]
 };
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[];
