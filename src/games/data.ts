@@ -43,6 +43,7 @@ export interface MonthlyPlayer extends Player {
 
 export interface AllTimePlayer extends Player {
 	UUID: string;
+	first_played: number;
 	level: number;
 }
 
