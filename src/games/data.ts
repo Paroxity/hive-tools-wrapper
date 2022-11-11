@@ -32,7 +32,7 @@ export interface Player {
 	played: number;
 	victories: number;
 	losses: number;
-	win_percentage: number;
+	win_percentage: string;
 	xp: number;
 }
 

@@ -14,7 +14,9 @@ const commonProcessedStats: ((stats: Player) => void)[] = [
 	},
 	stats => {
 		stats.win_percentage =
-			stats.played === 0 ? 0 : stats.victories / stats.played;
+			stats.played === 0
+				? "0%"
+				: `${((stats.victories / stats.played) * 100).toFixed(2)}%`;
 	},
 	stats => {
 		Object.entries(stats).forEach(([key, value]) => {
@@ -23,7 +25,10 @@ const commonProcessedStats: ((stats: Player) => void)[] = [
 	}
 ];
 const kdrProcessedStat = (stats: PvPGameData) => {
-	stats.kdr = stats.deaths === 0 ? stats.kills : stats.kills / stats.deaths;
+	stats.kdr =
+		stats.deaths === 0
+			? stats.kills
+			: parseFloat((stats.kills / stats.deaths).toFixed(2));
 };
 
 export const MonthlyStatsProcessors: {
@@ -35,7 +40,7 @@ export const MonthlyStatsProcessors: {
 			stats.fkdr =
 				stats.deaths === 0
 					? stats.final_kills
-					: stats.final_kills / stats.deaths;
+					: parseFloat((stats.final_kills / stats.deaths).toFixed(2));
 		},
 		...commonProcessedStats
 	],
