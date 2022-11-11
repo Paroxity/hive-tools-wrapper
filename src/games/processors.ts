@@ -13,10 +13,11 @@ const commonProcessedStats: ((stats: Player) => void)[] = [
 		stats.losses = stats.played - stats.victories;
 	},
 	stats => {
-		stats.win_percentage =
-			stats.played === 0
-				? "0%"
-				: `${((stats.victories / stats.played) * 100).toFixed(2)}%`;
+		if (stats.victories !== undefined)
+			stats.win_percentage =
+				stats.played === 0
+					? "0%"
+					: `${((stats.victories / stats.played) * 100).toFixed(2)}%`;
 	},
 	stats => {
 		Object.entries(stats).forEach(([key, value]) => {
