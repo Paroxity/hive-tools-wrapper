@@ -9,6 +9,10 @@ export const GameInfo: Record<
 			max: number;
 			max_prestige?: number;
 		};
+		leaderboard_epoch: {
+			year: number;
+			month: number;
+		};
 	}
 > = {
 	[Game.TreasureWars]: {
@@ -17,6 +21,10 @@ export const GameInfo: Record<
 			increment_cap: 52,
 			max: 100,
 			max_prestige: 5
+		},
+		leaderboard_epoch: {
+			year: 2018,
+			month: 11
 		}
 	},
 	[Game.DeathRun]: {
@@ -24,12 +32,20 @@ export const GameInfo: Record<
 			increment: 200,
 			increment_cap: 42,
 			max: 75
+		},
+		leaderboard_epoch: {
+			year: 2019,
+			month: 0
 		}
 	},
 	[Game.HideAndSeek]: {
 		levels: {
 			increment: 100,
 			max: 50
+		},
+		leaderboard_epoch: {
+			year: 2022,
+			month: 5
 		}
 	},
 	[Game.MurderMystery]: {
@@ -38,12 +54,20 @@ export const GameInfo: Record<
 			increment_cap: 82,
 			max: 100,
 			max_prestige: 5
+		},
+		leaderboard_epoch: {
+			year: 2019,
+			month: 5
 		}
 	},
 	[Game.SurvivalGames]: {
 		levels: {
 			increment: 150,
 			max: 30
+		},
+		leaderboard_epoch: {
+			year: 2019,
+			month: 7
 		}
 	},
 	[Game.SkyWars]: {
@@ -51,18 +75,30 @@ export const GameInfo: Record<
 			increment: 150,
 			increment_cap: 52,
 			max: 75
+		},
+		leaderboard_epoch: {
+			year: 2020,
+			month: 4
 		}
 	},
 	[Game.JustBuild]: {
 		levels: {
 			increment: 100,
 			max: 20
+		},
+		leaderboard_epoch: {
+			year: 2022,
+			month: 0
 		}
 	},
 	[Game.GroundWars]: {
 		levels: {
 			increment: 150,
 			max: 20
+		},
+		leaderboard_epoch: {
+			year: 2022,
+			month: 5
 		}
 	},
 	[Game.BlockDrop]: {
@@ -70,12 +106,20 @@ export const GameInfo: Record<
 			increment: 150,
 			increment_cap: 22,
 			max: 25
+		},
+		leaderboard_epoch: {
+			year: 2022,
+			month: 5
 		}
 	},
 	[Game.CaptureTheFlag]: {
 		levels: {
 			increment: 150,
 			max: 20
+		},
+		leaderboard_epoch: {
+			year: 2022,
+			month: 5
 		}
 	}
 };
