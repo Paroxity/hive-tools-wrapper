@@ -6,6 +6,7 @@ import {
 	GamePlayer,
 	MonthlyPlayer
 } from "./games/data";
+import { GameInfo } from "./games/info";
 import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
@@ -54,6 +55,18 @@ async function fetchData<T>(
 	}
 }
 
+function validateMonth(game: Game, year?: number, month?: number): void {
+	if (year === undefined || month === undefined) return;
+	const { year: epochYear, month: epochMonth } =
+		GameInfo[game].leaderboard_epoch;
+
+	if (year < epochYear || (year === epochYear && month < epochMonth)) {
+		throw new Error(
+			`Can not access monthly statistics for the month (${month}/${year}), prior to epoch (${epochMonth}/${epochYear}).`
+		);
+	}
+}
+
 export async function getMonthlyStats<G extends Game>(
 	identifier: string,
 	game: G,
@@ -61,6 +74,8 @@ export async function getMonthlyStats<G extends Game>(
 	month?: number,
 	controller?: AbortController
 ): Promise<GamePlayer<G, MonthlyPlayer>> {
+	validateMonth(game, year, month);
+
 	let url = `/game/monthly/player/${game}/${identifier}`;
 	if (year && month) url += `/${year}/${month}`;
 
@@ -90,6 +105,8 @@ export async function getMonthlyLeaderboard<G extends Game>(
 	skip?: number,
 	controller?: AbortController
 ): Promise<GameLeaderboard<G, MonthlyPlayer>> {
+	validateMonth(game, year, month);
+
 	let url = `/game/monthly/${game}`;
 	if (year && month) {
 		url += `/${year}/${month}`;
