@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from "axios";
 import {
 	AllTimePlayer,
 	Game,
@@ -14,7 +13,7 @@ import {
 
 const cachedResponses: {
 	[key: string]: {
-		response: Promise<AxiosResponse<any>>;
+		response: Promise<any>;
 		time: number;
 	};
 } = {};
@@ -23,36 +22,30 @@ async function fetchData<T>(
 	url: string,
 	controller?: AbortController
 ): Promise<T> {
-	try {
-		if (cachedResponses[url]) {
-			if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000) {
-				return (await cachedResponses[url].response).data;
-			}
-			delete cachedResponses[url];
+	if (cachedResponses[url]) {
+		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000) {
+			return await cachedResponses[url].response;
 		}
-		cachedResponses[url] = {
-			response: axios.get("https://api.playhive.com/v0" + url, {
-				signal: controller?.signal
-			}),
-			time: Date.now()
-		};
-		const { data } = await cachedResponses[url].response;
-		cachedResponses[url].time = Date.now();
-		return data;
-	} catch (e) {
 		delete cachedResponses[url];
-		if (axios.isAxiosError(e)) {
-			const response = e.response;
-			if (response?.status === 429) {
-				const timeout = response?.headers["retry-after"];
-				if (typeof timeout === "string") {
-					await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
-					return fetchData(url, controller);
-				}
-			}
-		}
-		throw e;
 	}
+	cachedResponses[url] = {
+		response: fetch("https://api.playhive.com/v0" + url, {
+			signal: controller?.signal
+		}).then(async response => {
+			if (response.ok) return response.json();
+
+			const timeout = response.headers.get("retry-after");
+			if (response.status !== 429 || !timeout)
+				throw new Error(response.statusText);
+
+			await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
+			return await fetchData(url, controller);
+		}),
+		time: Date.now()
+	};
+	const data = await cachedResponses[url].response;
+	cachedResponses[url].time = Date.now();
+	return data;
 }
 
 function validateMonth(game: Game, year?: number, month?: number): void {
@@ -143,4 +136,3 @@ export async function getAllTimeLeaderboard<G extends Game>(
 export * from "./games/data";
 export * from "./games/info";
 export * from "./games/processors";
-
