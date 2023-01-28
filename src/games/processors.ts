@@ -57,7 +57,8 @@ export const MonthlyStatsProcessors: {
 	[Game.JustBuild]: commonProcessedStats,
 	[Game.GroundWars]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.BlockDrop]: commonProcessedStats,
-	[Game.CaptureTheFlag]: [kdrProcessedStat, ...commonProcessedStats]
+	[Game.CaptureTheFlag]: [kdrProcessedStat, ...commonProcessedStats],
+	[Game.BlockParty]: commonProcessedStats
 };
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[];
@@ -89,4 +90,3 @@ function calculateLevel(game: Game, xp: number) {
 				((flattenLevel - 1) * increment * 2);
 	return level;
 }
-

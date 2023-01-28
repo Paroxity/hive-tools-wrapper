@@ -8,7 +8,8 @@ export enum Game {
 	JustBuild = "build",
 	GroundWars = "ground",
 	BlockDrop = "drop",
-	CaptureTheFlag = "ctf"
+	CaptureTheFlag = "ctf",
+	BlockParty = "party"
 }
 
 export type LeaderboardGameData = {
@@ -110,6 +111,10 @@ type GamePlayerInner<P extends Player> = {
 			flags_captured: number;
 			flags_returned: number;
 		};
+	[Game.BlockParty]: P & {
+		powerups_collected: number;
+		rounds_survived: number;
+	};
 };
 
 export type GamePlayer<
@@ -122,4 +127,3 @@ export type GameLeaderboard<
 	G extends Game,
 	P extends Player = MonthlyPlayer
 > = (GamePlayer<G, P> & LeaderboardGameData)[];
-

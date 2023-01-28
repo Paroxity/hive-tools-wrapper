@@ -121,6 +121,15 @@ export const GameInfo: Record<
 			year: 2022,
 			month: 5
 		}
+	},
+	[Game.BlockParty]: {
+		levels: {
+			increment: 150,
+			max: 25
+		},
+		leaderboard_epoch: {
+			year: 2023,
+			month: 0
+		}
 	}
 };
-
