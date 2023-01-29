@@ -23,9 +23,13 @@ async function fetchData<T>(
 	controller?: AbortController
 ): Promise<T> {
 	if (cachedResponses[url]) {
-		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000) {
-			return await cachedResponses[url].response;
-		}
+		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000)
+			return await cachedResponses[url].response.catch(async e => {
+				//Assume if the request errored out and the AbortController was aborted, that was the reason for the error,
+				//and that this new request is using a new AbortController and should continue.
+				if (e.name !== "AbortError") throw e;
+				return await fetchData(url);
+			});
 		delete cachedResponses[url];
 	}
 	cachedResponses[url] = {
@@ -35,11 +39,10 @@ async function fetchData<T>(
 			.then(async response => {
 				if (response.ok) return response.json();
 
+				delete cachedResponses[url];
 				const timeout = response.headers.get("retry-after");
-				if (response.status !== 429 || !timeout) {
-					delete cachedResponses[url];
+				if (response.status !== 429 || !timeout)
 					throw new Error(response.statusText);
-				}
 
 				await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
 				return await fetchData(url, controller);
