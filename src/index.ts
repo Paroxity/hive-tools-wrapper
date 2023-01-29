@@ -31,18 +31,23 @@ async function fetchData<T>(
 	cachedResponses[url] = {
 		response: fetch("https://api.playhive.com/v0" + url, {
 			signal: controller?.signal
-		}).then(async response => {
-			if (response.ok) return response.json();
+		})
+			.then(async response => {
+				if (response.ok) return response.json();
 
-			const timeout = response.headers.get("retry-after");
-			if (response.status !== 429 || !timeout) {
+				const timeout = response.headers.get("retry-after");
+				if (response.status !== 429 || !timeout) {
+					delete cachedResponses[url];
+					throw new Error(response.statusText);
+				}
+
+				await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
+				return await fetchData(url, controller);
+			})
+			.catch(e => {
 				delete cachedResponses[url];
-				throw new Error(response.statusText);
-			}
-
-			await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
-			return await fetchData(url, controller);
-		}),
+				throw e;
+			}),
 		time: Date.now()
 	};
 	const data = await cachedResponses[url].response;
