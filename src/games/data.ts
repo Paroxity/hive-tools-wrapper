@@ -68,12 +68,13 @@ type GamePlayerInner<P extends Player> = {
 		seeker_kills: number;
 		deaths: number;
 	};
-	[Game.MurderMystery]: P & {
-		murders: number;
-		murderer_eliminations: number;
-		deaths: number;
-		coins: number;
-	};
+	[Game.MurderMystery]: P &
+		PrestigeGameData<P> & {
+			murders: number;
+			murderer_eliminations: number;
+			deaths: number;
+			coins: number;
+		};
 	[Game.SurvivalGames]: P &
 		PvPGameData & {
 			crates: number;
