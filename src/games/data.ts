@@ -91,6 +91,7 @@ type GamePlayerInner<P extends Player> = {
 		rating_meh_received: number;
 		rating_okay_received: number;
 		rating_good_received: number;
+		rating_great_received: number;
 		rating_love_received: number;
 	};
 
