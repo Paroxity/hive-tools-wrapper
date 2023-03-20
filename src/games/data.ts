@@ -17,11 +17,9 @@ export type LeaderboardGameData = {
 	human_index: number;
 };
 
-export type PrestigeGameData<P extends Player> = P extends AllTimePlayer
-	? {
-			prestige: number;
-	  }
-	: {};
+export type PrestigeGameData = {
+	prestige: number;
+};
 
 export type PvPGameData = {
 	kills: number;
@@ -51,7 +49,7 @@ export interface AllTimePlayer extends Player {
 type GamePlayerInner<P extends Player> = {
 	[Game.TreasureWars]: P &
 		PvPGameData &
-		PrestigeGameData<P> & {
+		PrestigeGameData & {
 			final_kills: number;
 			fkdr: number;
 			fkpr: number;
@@ -69,7 +67,7 @@ type GamePlayerInner<P extends Player> = {
 		deaths: number;
 	};
 	[Game.MurderMystery]: P &
-		PrestigeGameData<P> & {
+		PrestigeGameData & {
 			murders: number;
 			murderer_eliminations: number;
 			deaths: number;
