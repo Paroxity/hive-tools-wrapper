@@ -4,7 +4,6 @@ import {
 	GamePlayer,
 	MonthlyPlayer,
 	Player,
-	PrestigeGameData,
 	PvPGameData
 } from "./data";
 import { GameInfo } from "./info";
@@ -33,7 +32,7 @@ const kdrProcessedStat = (stats: PvPGameData) => {
 			: parseFloat((stats.kills / stats.deaths).toFixed(2));
 };
 
-const StatsProcessors: {
+export const MonthlyStatsProcessors: {
 	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
 } = {
 	[Game.TreasureWars]: [
@@ -61,26 +60,9 @@ const StatsProcessors: {
 	[Game.CaptureTheFlag]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.BlockParty]: commonProcessedStats
 };
-
-export const MonthlyStatsProcessors: {
-	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
-} = Object.entries(StatsProcessors).reduce(
-	(acc, [game, processors]) => ({
-		...acc,
-		[game]: [
-			...processors,
-			(stats: MonthlyPlayer) => {
-				if (stats.xp && hasPrestige(stats)) {
-					stats.xp = stats.xp + stats.prestige * calculateMaxXp(game as Game);
-				}
-			}
-		]
-	}),
-	{} as { [G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[] }
-);
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[];
-} = Object.entries(StatsProcessors).reduce(
+} = Object.entries(MonthlyStatsProcessors).reduce(
 	(acc, [game, processors]) => ({
 		...acc,
 		[game]: [
@@ -91,10 +73,6 @@ export const AllTimeStatsProcessors: {
 	}),
 	{} as { [G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[] }
 );
-
-function hasPrestige(stats: GamePlayer<any>): stats is PrestigeGameData {
-	return stats.prestige;
-}
 
 function calculateLevel(game: Game, xp: number) {
 	const increment = GameInfo[game].levels.increment / 2;
@@ -111,17 +89,4 @@ function calculateLevel(game: Game, xp: number) {
 					(flattenLevel - 1) * increment)) /
 				((flattenLevel - 1) * increment * 2);
 	return level;
-}
-
-function calculateMaxXp(game: Game): number {
-	const maxLevel = GameInfo[game].levels.max - 1;
-	const increment = GameInfo[game].levels.increment;
-	const incrementCap = GameInfo[game].levels.increment_cap;
-	const inputIncrement = increment / 2;
-	const inputLevel = incrementCap ? incrementCap - 1 : maxLevel;
-	return (
-		inputIncrement * Math.pow(inputLevel, 2) +
-		inputIncrement * inputLevel +
-		increment * inputLevel * (maxLevel - inputLevel)
-	);
 }
