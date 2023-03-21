@@ -39,12 +39,11 @@ async function fetchData<T>(
 			.then(async response => {
 				if (response.ok) return response.json();
 
-				delete cachedResponses[url];
-				const timeout = response.headers.get("retry-after");
-				if (response.status !== 429 || !timeout)
-					throw new Error(response.statusText);
+				const timeout = response.headers.get("retry-after") ?? "60";
+				if (response.status !== 429) throw new Error(response.statusText);
 
 				await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
+				delete cachedResponses[url];
 				return await fetchData(url, controller);
 			})
 			.catch(e => {
