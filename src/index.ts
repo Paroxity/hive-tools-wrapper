@@ -142,6 +142,16 @@ export async function getAllTimeLeaderboard<G extends Game>(
 	return data;
 }
 
+export async function getServerStats(controller?: AbortController): Promise<{
+	unique_players: {
+		global: number;
+	} & {
+		[game in Game]: number;
+	};
+}> {
+	return await fetchData("/global/statistics", controller);
+}
+
 export * from "./games/data";
 export * from "./games/info";
 export * from "./games/processors";
