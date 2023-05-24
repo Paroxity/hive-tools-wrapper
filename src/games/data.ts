@@ -27,7 +27,7 @@ export type PvPGameData = {
 	kdr: number;
 };
 
-export interface Player {
+export interface BaseGameStats {
 	played: number;
 	victories: number;
 	losses: number;
@@ -35,18 +35,18 @@ export interface Player {
 	xp: number;
 }
 
-export interface MonthlyPlayer extends Player {
+export interface MonthlyGameStats extends BaseGameStats {
 	username: string;
 	uncapped_xp: number;
 }
 
-export interface AllTimePlayer extends Player {
+export interface AllTimeGameStats extends BaseGameStats {
 	UUID: string;
 	first_played: number;
 	level: number;
 }
 
-type GamePlayerInner<P extends Player> = {
+type GameStatsInner<P extends BaseGameStats> = {
 	[Game.TreasureWars]: P &
 		PvPGameData &
 		PrestigeGameData & {
@@ -117,13 +117,13 @@ type GamePlayerInner<P extends Player> = {
 	};
 };
 
-export type GamePlayer<
+export type GameStats<
 	G extends Game,
-	P extends Player = any
-> = GamePlayerInner<P>[G] &
-	(P extends MonthlyPlayer ? LeaderboardGameData : {});
+	P extends BaseGameStats = any
+> = GameStatsInner<P>[G] &
+	(P extends MonthlyGameStats ? LeaderboardGameData : {});
 
 export type GameLeaderboard<
 	G extends Game,
-	P extends Player = MonthlyPlayer
-> = (GamePlayer<G, P> & LeaderboardGameData)[];
+	P extends BaseGameStats = MonthlyGameStats
+> = (GameStats<G, P> & LeaderboardGameData)[];

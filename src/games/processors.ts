@@ -1,14 +1,14 @@
 import {
-	AllTimePlayer,
+	AllTimeGameStats,
 	Game,
-	GamePlayer,
-	MonthlyPlayer,
-	Player,
+	GameStats,
+	MonthlyGameStats,
+	BaseGameStats,
 	PvPGameData
 } from "./data";
 import { GameInfo } from "./info";
 
-const commonProcessedStats: ((stats: Player) => void)[] = [
+const commonProcessedStats: ((stats: BaseGameStats) => void)[] = [
 	stats => {
 		stats.losses = stats.played - stats.victories;
 	},
@@ -21,7 +21,7 @@ const commonProcessedStats: ((stats: Player) => void)[] = [
 	},
 	stats => {
 		Object.entries(stats).forEach(([key, value]) => {
-			if (Number.isNaN(value)) delete stats[key as keyof Player];
+			if (Number.isNaN(value)) delete stats[key as keyof BaseGameStats];
 		});
 	}
 ];
@@ -33,7 +33,7 @@ const kdrProcessedStat = (stats: PvPGameData) => {
 };
 
 export const MonthlyStatsProcessors: {
-	[G in Game]: ((stats: GamePlayer<G, MonthlyPlayer>) => void)[];
+	[G in Game]: ((stats: GameStats<G,  MonthlyGameStats>) => void)[];
 } = {
 	[Game.TreasureWars]: [
 		kdrProcessedStat,
@@ -61,17 +61,17 @@ export const MonthlyStatsProcessors: {
 	[Game.BlockParty]: commonProcessedStats
 };
 export const AllTimeStatsProcessors: {
-	[G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[];
+	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];
 } = Object.entries(MonthlyStatsProcessors).reduce(
 	(acc, [game, processors]) => ({
 		...acc,
 		[game]: [
 			...processors,
-			(stats: AllTimePlayer) =>
+			(stats: AllTimeGameStats) =>
 				(stats.level = calculateLevel(game as Game, stats.xp))
 		]
 	}),
-	{} as { [G in Game]: ((stats: GamePlayer<G, AllTimePlayer>) => void)[] }
+	{} as { [G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[] }
 );
 
 function calculateLevel(game: Game, xp: number) {
