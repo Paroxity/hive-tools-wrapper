@@ -69,7 +69,7 @@ function validateMonth(game: Game, year?: number, month?: number): void {
 	}
 }
 
-export async function getMonthlyStats<G extends Game>(
+export async function getGameMonthlyStats<G extends Game>(
 	identifier: string,
 	game: G,
 	year?: number,
@@ -86,7 +86,7 @@ export async function getMonthlyStats<G extends Game>(
 	return data;
 }
 
-export async function getAllTimeStats<G extends Game>(
+export async function getGameAllTimeStats<G extends Game>(
 	identifier: string,
 	game: G,
 	controller?: AbortController
