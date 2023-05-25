@@ -10,6 +10,7 @@ import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
 } from "./games/processors";
+import { Player } from "./player/data";
 
 const cachedResponses: {
 	[key: string]: {
@@ -69,6 +70,29 @@ function validateMonth(game: Game, year?: number, month?: number): void {
 	}
 }
 
+export async function getMonthlyStats(
+	identifier: string,
+	year?: number,
+	month?: number,
+	controller?: AbortController
+) {
+	validateMonth(Game.TreasureWars, year, month);
+
+	let url = `/game/monthly/player/all/${identifier}`;
+	if (year && month) url += `/${year}/${month}`;
+
+	const data: { [G in Game]: GameStats<G, MonthlyGameStats> } = await fetchData(
+		url,
+		controller
+	);
+	Object.entries(data).forEach(([game, stats]) => {
+		MonthlyStatsProcessors[game as Game].forEach(processor =>
+			processor(stats as GameStats<Game>)
+		);
+	});
+	return data;
+}
+
 export async function getGameMonthlyStats<G extends Game>(
 	identifier: string,
 	game: G,
@@ -86,6 +110,23 @@ export async function getGameMonthlyStats<G extends Game>(
 	return data;
 }
 
+export async function getAllTimeStats(
+	identifier: string,
+	controller?: AbortController
+) {
+	const data: { [G in Game]: GameStats<G, AllTimeGameStats> } & {
+		main: Player;
+	} = await fetchData(`/game/all/all/${identifier}`, controller);
+	Object.entries(data)
+		.filter(([game]) => game !== "main")
+		.forEach(([game, stats]) => {
+			AllTimeStatsProcessors[game as Game].forEach(processor =>
+				processor(stats as GameStats<Game>)
+			);
+		});
+	return data;
+}
+
 export async function getGameAllTimeStats<G extends Game>(
 	identifier: string,
 	game: G,
@@ -97,6 +138,17 @@ export async function getGameAllTimeStats<G extends Game>(
 	);
 	AllTimeStatsProcessors[game].forEach(processor => processor(data));
 	return data;
+}
+
+export async function getMainStats(
+	identifier: string,
+	controller?: AbortController
+): Promise<Player> {
+	return (
+		(await fetchData(`/game/all/all/${identifier}`, controller)) as {
+			main: Player;
+		}
+	)["main"];
 }
 
 export async function getMonthlyLeaderboard<G extends Game>(
