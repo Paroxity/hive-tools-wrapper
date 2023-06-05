@@ -81,11 +81,13 @@ export async function getMonthlyStats(
 	let url = `/game/monthly/player/all/${identifier}`;
 	if (year && month) url += `/${year}/${month}`;
 
-	const data: { [G in Game]: GameStats<G, MonthlyGameStats> } = await fetchData(
-		url,
-		controller
-	);
+	const data: { [G in Game]: GameStats<G, MonthlyGameStats> | null } =
+		await fetchData(url, controller);
 	Object.entries(data).forEach(([game, stats]) => {
+		if (Array.isArray(stats) || stats!.human_index === 2147483647) {
+			data[game as keyof typeof data] = null;
+			return;
+		}
 		MonthlyStatsProcessors[game as Game].forEach(processor =>
 			processor(stats as GameStats<Game>)
 		);
@@ -114,12 +116,16 @@ export async function getAllTimeStats(
 	identifier: string,
 	controller?: AbortController
 ) {
-	const data: { [G in Game]: GameStats<G, AllTimeGameStats> } & {
-		main: Player;
+	const data: { [G in Game]: GameStats<G, AllTimeGameStats> | null } & {
+		main: Player | null;
 	} = await fetchData(`/game/all/all/${identifier}`, controller);
 	Object.entries(data)
 		.filter(([game]) => game !== "main")
 		.forEach(([game, stats]) => {
+			if (Array.isArray(stats)) {
+				data[game as keyof typeof data] = null;
+				return;
+			}
 			AllTimeStatsProcessors[game as Game].forEach(processor =>
 				processor(stats as GameStats<Game>)
 			);
