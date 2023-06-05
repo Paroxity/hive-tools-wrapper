@@ -84,7 +84,7 @@ export async function getMonthlyStats(
 	const data: { [G in Game]: GameStats<G, MonthlyGameStats> | null } =
 		await fetchData(url, controller);
 	Object.entries(data).forEach(([game, stats]) => {
-		if (Array.isArray(stats) || stats!.human_index === 2147483647) {
+		if (!stats || Array.isArray(stats) || stats.human_index === 2147483647) {
 			data[game as keyof typeof data] = null;
 			return;
 		}
@@ -122,7 +122,7 @@ export async function getAllTimeStats(
 	Object.entries(data)
 		.filter(([game]) => game !== "main")
 		.forEach(([game, stats]) => {
-			if (Array.isArray(stats)) {
+			if (!stats || Array.isArray(stats)) {
 				data[game as keyof typeof data] = null;
 				return;
 			}
