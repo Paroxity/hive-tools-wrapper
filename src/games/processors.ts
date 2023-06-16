@@ -88,12 +88,12 @@ export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];
 } = Object.entries(MonthlyStatsProcessors).reduce(
 	(acc, [game, processors]) => ({
-		...acc,
 		[game]: [
 			...processors,
 			(stats: AllTimeGameStats) =>
 				(stats.level = calculateLevel(game as Game, stats.xp))
-		]
+		],
+		...acc
 	}),
 	{} as { [G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[] }
 );
