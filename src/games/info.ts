@@ -131,5 +131,16 @@ export const GameInfo: Record<
 			year: 2023,
 			month: 0
 		}
+	},
+	[Game.Bridge]: {
+		levels: {
+			increment: 0,
+			max: 20
+		},
+		leaderboard_epoch: {
+			year: 2023,
+			month: 5
+		}
 	}
 };
+
