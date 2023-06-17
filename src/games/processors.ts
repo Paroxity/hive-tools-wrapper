@@ -99,6 +99,25 @@ export const AllTimeStatsProcessors: {
 );
 
 function calculateLevel(game: Game, xp: number) {
+	if (game === Game.Bridge) {
+		let lastXp = 0;
+		let currentXp = 300;
+		let increment = 300;
+		let additionalIncrement = 300;
+
+		let i = 2;
+		while (true) {
+			if (xp === currentXp) return i;
+			else if (xp < currentXp) return i + (xp - lastXp) / (currentXp - lastXp) - 1;
+
+			additionalIncrement = Math.floor(additionalIncrement * 1.08);
+			increment += additionalIncrement;
+			lastXp = currentXp;
+			currentXp += increment;
+			i++;
+		}
+	}
+
 	const increment = GameInfo[game].levels.increment / 2;
 	const flattenLevel = GameInfo[game].levels.increment_cap;
 	let level =
