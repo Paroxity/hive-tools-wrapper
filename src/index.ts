@@ -126,7 +126,7 @@ export async function getAllTimeStats(
 				data[game as keyof typeof data] = null;
 				return;
 			}
-			AllTimeStatsProcessors[game as Game].forEach(processor =>
+			AllTimeStatsProcessors[game as Game]?.forEach(processor =>
 				processor(stats as GameStats<Game>)
 			);
 		});
