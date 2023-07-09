@@ -10,7 +10,8 @@ export enum Game {
 	BlockDrop = "drop",
 	CaptureTheFlag = "ctf",
 	BlockParty = "party",
-	Bridge = "bridge"
+	Bridge = "bridge",
+	Gravity = "grav"
 }
 
 export type LeaderboardGameData = {
@@ -116,9 +117,15 @@ type GameStatsInner<P extends BaseGameStats> = {
 		powerups_collected: number;
 		rounds_survived: number;
 	};
-	[Game.Bridge]: P & PvPGameData & {
-		goals: number;
-	}
+	[Game.Bridge]: P &
+		PvPGameData & {
+			goals: number;
+		};
+	[Game.Gravity]: P & {
+		deaths: number;
+		maps_completed: number;
+		maps_completed_without_dying: number;
+	};
 };
 
 export type GameStats<

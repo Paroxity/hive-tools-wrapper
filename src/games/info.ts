@@ -141,6 +141,15 @@ export const GameInfo: Record<
 			year: 2023,
 			month: 5
 		}
+	},
+	[Game.Gravity]: {
+		levels: {
+			increment: 150,
+			max: 25
+		},
+		leaderboard_epoch: {
+			year: 2023,
+			month: 6
+		}
 	}
 };
-

@@ -82,7 +82,8 @@ export const MonthlyStatsProcessors: {
 		},
 		kdrProcessedStat,
 		...commonProcessedStats
-	]
+	],
+	[Game.Gravity]: commonProcessedStats
 };
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];
@@ -108,7 +109,8 @@ function calculateLevel(game: Game, xp: number) {
 		let i = 2;
 		while (true) {
 			if (xp === currentXp) return i;
-			else if (xp < currentXp) return i + (xp - lastXp) / (currentXp - lastXp) - 1;
+			else if (xp < currentXp)
+				return i + (xp - lastXp) / (currentXp - lastXp) - 1;
 
 			additionalIncrement = Math.floor(additionalIncrement * 1.08);
 			increment += additionalIncrement;
@@ -133,4 +135,3 @@ function calculateLevel(game: Game, xp: number) {
 				((flattenLevel - 1) * increment * 2);
 	return level;
 }
-
