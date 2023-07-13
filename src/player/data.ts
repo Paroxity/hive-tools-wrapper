@@ -35,4 +35,7 @@ export type Player = {
 	equipped_avatar: Avatar | null;
 	quest_count: number;
 	paid_ranks: Rank[];
+	pets: string[];
+	mounts: string[];
+	hats: string[];
 };
