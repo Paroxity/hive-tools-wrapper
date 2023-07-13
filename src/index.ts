@@ -222,3 +222,4 @@ export * from "./games/data";
 export * from "./games/info";
 export * from "./games/processors";
 export * from "./map/data";
+export * from "./player/data";
