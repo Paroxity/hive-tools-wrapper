@@ -11,6 +11,7 @@ import {
 	MonthlyStatsProcessors
 } from "./games/processors";
 import { Player } from "./player/data";
+import { GameMap } from "./map/data";
 
 const cachedResponses: {
 	[key: string]: {
@@ -210,7 +211,14 @@ export async function getServerStats(controller?: AbortController): Promise<{
 	return await fetchData("/global/statistics", controller);
 }
 
+export async function getGameMaps(
+	game: Game,
+	controller?: AbortController
+): Promise<GameMap[]> {
+	return await fetchData(`/game/map/${game}`, controller);
+}
+
 export * from "./games/data";
 export * from "./games/info";
 export * from "./games/processors";
-
+export * from "./map/data";
