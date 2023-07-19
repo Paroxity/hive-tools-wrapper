@@ -22,7 +22,8 @@ const cachedResponses: {
 
 async function fetchData<T>(
 	url: string,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit,
 ): Promise<T> {
 	if (cachedResponses[url]) {
 		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000)
@@ -36,7 +37,8 @@ async function fetchData<T>(
 	}
 	cachedResponses[url] = {
 		response: fetch("https://api.playhive.com/v0" + url, {
-			signal: controller?.signal
+			signal: controller?.signal,
+			...init
 		})
 			.then(async response => {
 				if (response.ok) return response.json();
