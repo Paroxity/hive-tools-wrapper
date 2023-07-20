@@ -104,6 +104,8 @@ export const AllTimeStatsProcessors: {
 
 function calculateLevel(game: Game, xp: number) {
 	if (game === Game.Bridge) {
+		if (!xp) return NaN;
+
 		let lastXp = 0;
 		let currentXp = 300;
 		let increment = 300;
