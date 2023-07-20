@@ -23,7 +23,7 @@ const cachedResponses: {
 async function fetchData<T>(
 	url: string,
 	controller?: AbortController,
-	init?: RequestInit,
+	init?: RequestInit
 ): Promise<T> {
 	if (cachedResponses[url]) {
 		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000)
@@ -77,7 +77,8 @@ export async function getMonthlyStats(
 	identifier: string,
 	year?: number,
 	month?: number,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ) {
 	validateMonth(Game.TreasureWars, year, month);
 
@@ -85,7 +86,7 @@ export async function getMonthlyStats(
 	if (year && month) url += `/${year}/${month}`;
 
 	const data: { [G in Game]: GameStats<G, MonthlyGameStats> | null } =
-		await fetchData(url, controller);
+		await fetchData(url, controller, init);
 	Object.entries(data).forEach(([game, stats]) => {
 		if (!stats || Array.isArray(stats) || stats.human_index === 2147483647) {
 			data[game as keyof typeof data] = null;
@@ -103,25 +104,27 @@ export async function getGameMonthlyStats<G extends Game>(
 	game: G,
 	year?: number,
 	month?: number,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ): Promise<GameStats<G, MonthlyGameStats>> {
 	validateMonth(game, year, month);
 
 	let url = `/game/monthly/player/${game}/${identifier}`;
 	if (year && month) url += `/${year}/${month}`;
 
-	const data: GameStats<G, MonthlyGameStats> = await fetchData(url, controller);
+	const data: GameStats<G, MonthlyGameStats> = await fetchData(url, controller, init);
 	MonthlyStatsProcessors[game].forEach(processor => processor(data));
 	return data;
 }
 
 export async function getAllTimeStats(
 	identifier: string,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ) {
 	const data: { [G in Game]: GameStats<G, AllTimeGameStats> | null } & {
 		main: Player | null;
-	} = await fetchData(`/game/all/all/${identifier}`, controller);
+	} = await fetchData(`/game/all/all/${identifier}`, controller, init);
 	Object.entries(data)
 		.filter(([game]) => game !== "main")
 		.forEach(([game, stats]) => {
@@ -139,11 +142,13 @@ export async function getAllTimeStats(
 export async function getGameAllTimeStats<G extends Game>(
 	identifier: string,
 	game: G,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ): Promise<GameStats<G, AllTimeGameStats>> {
 	const data: GameStats<G, AllTimeGameStats> = await fetchData(
 		`/game/all/${game}/${identifier}`,
-		controller
+		controller,
+		init
 	);
 	AllTimeStatsProcessors[game].forEach(processor => processor(data));
 	return data;
@@ -151,10 +156,11 @@ export async function getGameAllTimeStats<G extends Game>(
 
 export async function getMainStats(
 	identifier: string,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ): Promise<Player> {
 	return (
-		(await fetchData(`/game/all/all/${identifier}`, controller)) as {
+		(await fetchData(`/game/all/all/${identifier}`, controller, init)) as {
 			main: Player;
 		}
 	)["main"];
@@ -166,7 +172,8 @@ export async function getMonthlyLeaderboard<G extends Game>(
 	month?: number,
 	amount?: number,
 	skip?: number,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ): Promise<GameLeaderboard<G, MonthlyGameStats>> {
 	validateMonth(game, year, month);
 
@@ -181,7 +188,8 @@ export async function getMonthlyLeaderboard<G extends Game>(
 
 	const data: GameLeaderboard<G, MonthlyGameStats> = await fetchData(
 		url,
-		controller
+		controller,
+		init
 	);
 	MonthlyStatsProcessors[game].forEach(processor =>
 		data.forEach(d => processor(d))
@@ -191,11 +199,13 @@ export async function getMonthlyLeaderboard<G extends Game>(
 
 export async function getAllTimeLeaderboard<G extends Game>(
 	game: G,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ): Promise<GameLeaderboard<G, AllTimeGameStats>> {
 	const data: GameLeaderboard<G, AllTimeGameStats> = await fetchData(
 		`/game/all/${game}`,
-		controller
+		controller,
+		init
 	);
 	AllTimeStatsProcessors[game].forEach(processor =>
 		data.forEach(d => processor(d))
@@ -203,21 +213,22 @@ export async function getAllTimeLeaderboard<G extends Game>(
 	return data;
 }
 
-export async function getServerStats(controller?: AbortController): Promise<{
+export async function getServerStats(controller?: AbortController, init?: RequestInit): Promise<{
 	unique_players: {
 		global: number;
 	} & {
 		[game in Game]: number;
 	};
 }> {
-	return await fetchData("/global/statistics", controller);
+	return await fetchData("/global/statistics", controller, init);
 }
 
 export async function getGameMaps(
 	game: Game,
-	controller?: AbortController
+	controller?: AbortController,
+	init?: RequestInit
 ): Promise<GameMap[]> {
-	return await fetchData(`/game/map/${game}`, controller);
+	return await fetchData(`/game/map/${game}`, controller, init);
 }
 
 export * from "./games/data";
