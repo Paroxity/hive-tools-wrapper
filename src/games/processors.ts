@@ -89,15 +89,15 @@ export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];
 } = Object.entries(MonthlyStatsProcessors).reduce(
 	(acc, [game, processors]) => ({
+		...acc,
 		[game]: [
-			...processors,
 			(stats: AllTimeGameStats) => {
 				stats.level = calculateLevel(game as Game, stats.xp);
 				if (GameInfo[game as Game].levels.max_prestige)
 					(stats as any).prestige ??= 0;
-			}
-		],
-		...acc
+			},
+			...processors
+		]
 	}),
 	{} as { [G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[] }
 );
