@@ -41,7 +41,7 @@ export const GameInfo: Record<
 	[Game.HideAndSeek]: {
 		levels: {
 			increment: 100,
-			max: 50
+			max: 75
 		},
 		leaderboard_epoch: {
 			year: 2022,
