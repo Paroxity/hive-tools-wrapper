@@ -138,3 +138,4 @@ export type GameLeaderboard<
 	G extends Game,
 	P extends BaseGameStats = MonthlyGameStats
 > = (GameStats<G, P> & LeaderboardGameData)[];
+

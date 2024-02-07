@@ -10,3 +10,4 @@ export type GameMap = {
 	variant: "REGULAR" | "DUOS" | "TRIOS" | "SQUADS" | "MEGA" | "ROYALE";
 	image: string;
 };
+

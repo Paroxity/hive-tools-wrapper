@@ -116,7 +116,11 @@ export async function getGameMonthlyStats<G extends Game>(
 	let url = `/game/monthly/player/${game}/${identifier}`;
 	if (year && month) url += `/${year}/${month}`;
 
-	const data: GameStats<G, MonthlyGameStats> = await fetchData(url, controller, init);
+	const data: GameStats<G, MonthlyGameStats> = await fetchData(
+		url,
+		controller,
+		init
+	);
 	MonthlyStatsProcessors[game].forEach(processor => processor(data));
 	return data;
 }
@@ -217,7 +221,10 @@ export async function getAllTimeLeaderboard<G extends Game>(
 	return data;
 }
 
-export async function getServerStats(controller?: AbortController, init?: RequestInit): Promise<{
+export async function getServerStats(
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<{
 	unique_players: {
 		global: number;
 	} & {
@@ -248,3 +255,4 @@ export * from "./games/info";
 export * from "./games/processors";
 export * from "./map/data";
 export * from "./player/data";
+

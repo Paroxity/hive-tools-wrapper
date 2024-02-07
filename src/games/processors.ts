@@ -140,3 +140,4 @@ function calculateLevel(game: Game, xp: number) {
 				((flattenLevel - 1) * increment * 2);
 	return level;
 }
+
