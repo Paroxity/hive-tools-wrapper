@@ -6,19 +6,19 @@ settings:
 
 devDependencies:
   '@typescript-eslint/eslint-plugin':
-    specifier: ^6.5.0
+    specifier: ^6.21.0
     version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.56.0)(typescript@5.3.3)
   '@typescript-eslint/parser':
-    specifier: ^6.5.0
+    specifier: ^6.21.0
     version: 6.21.0(eslint@8.56.0)(typescript@5.3.3)
   eslint:
-    specifier: ^8.48.0
+    specifier: ^8.56.0
     version: 8.56.0
   prettier:
-    specifier: ^3.0.3
+    specifier: ^3.2.5
     version: 3.2.5
   typescript:
-    specifier: ^5.2.2
+    specifier: ^5.3.3
     version: 5.3.3
 
 packages:
