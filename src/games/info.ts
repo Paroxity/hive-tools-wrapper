@@ -115,7 +115,7 @@ export const GameInfo: Record<
 	[Game.CaptureTheFlag]: {
 		levels: {
 			increment: 150,
-			max: 20
+			max: 50
 		},
 		leaderboard_epoch: {
 			year: 2022,
