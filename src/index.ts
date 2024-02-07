@@ -12,9 +12,6 @@ import {
 } from "./games/processors";
 import { Player } from "./player/data";
 import { GameMap } from "./map/data";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const cachedResponses: {
 	[key: string]: {
@@ -23,12 +20,21 @@ const cachedResponses: {
 	};
 } = {};
 
+let hiveApiUrl = "https://api.playhive.com/v0";
+
+export function getHiveApiUrl(): string {
+	return hiveApiUrl;
+}
+
+export function setHiveApiUrl(url: string) {
+	hiveApiUrl = url;
+}
+
 async function fetchData<T>(
 	url: string,
 	controller?: AbortController,
 	init?: RequestInit
 ): Promise<T> {
-	const baseUrl = process.env.HIVE_API_URL ?? "https://api.playhive.com/v0";
 	if (cachedResponses[url]) {
 		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000)
 			return await cachedResponses[url].response.catch(async e => {
@@ -40,7 +46,7 @@ async function fetchData<T>(
 		delete cachedResponses[url];
 	}
 	cachedResponses[url] = {
-		response: fetch(baseUrl + url, {
+		response: fetch(hiveApiUrl + url, {
 			signal: controller?.signal,
 			...init
 		})
