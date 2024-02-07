@@ -5,7 +5,7 @@ import {
 	GameStats,
 	MonthlyGameStats
 } from "./games/data";
-import { GameInfo } from "./games/info";
+import { GameInfo, GameMetainfo } from "./games/info";
 import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
@@ -233,6 +233,14 @@ export async function getGameMaps(
 	init?: RequestInit
 ): Promise<GameMap[]> {
 	return await fetchData(`/game/map/${game}`, controller, init);
+}
+
+export async function getGameMetainfo(
+	game: Game,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<GameMetainfo> {
+	return await fetchData(`/game/meta/${game}`, controller, init);
 }
 
 export * from "./games/data";

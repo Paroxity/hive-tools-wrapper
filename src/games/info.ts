@@ -153,3 +153,13 @@ export const GameInfo: Record<
 		}
 	}
 };
+
+export type GameMetainfo = {
+	name: string;
+	shortName: string;
+	maxLevel: number;
+	allowPrestiging: boolean;
+	maxPrestige: number;
+	experienceToLevel: Record<number, number>;
+};
+
