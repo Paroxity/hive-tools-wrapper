@@ -78,8 +78,18 @@ function validateMonth(game: Game, year?: number, month?: number): void {
 
 	if (year < epochYear || (year === epochYear && month < epochMonth)) {
 		throw new Error(
-			`Can not access monthly statistics for the month (${month}/${year}), prior to epoch (${epochMonth}/${epochYear}).`
+			`Can not access ${game} monthly statistics for month (${month}/${year}) prior to epoch (${epochMonth}/${epochYear}).`
 		);
+	}
+
+	if (GameInfo[game].archived) {
+		const { year: archivedYear, month: archivedMonth } =
+			GameInfo[game].archived!;
+		if (year > archivedYear || (year === archivedYear && month > archivedMonth)) {
+			throw new Error(
+				`Can not access ${game} monthly statistics for month (${month}/${year}) after archival (${archivedMonth}/${archivedYear}).`
+			);
+		}
 	}
 }
 

@@ -13,6 +13,10 @@ export const GameInfo: Record<
 			year: number;
 			month: number;
 		};
+		archived?: {
+			year: number;
+			month: number;
+		};
 	}
 > = {
 	[Game.TreasureWars]: {
@@ -25,6 +29,10 @@ export const GameInfo: Record<
 		leaderboard_epoch: {
 			year: 2018,
 			month: 11
+		},
+		archived: {
+			year: 2024,
+			month: 2
 		}
 	},
 	[Game.DeathRun]: {
