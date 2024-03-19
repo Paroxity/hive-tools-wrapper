@@ -137,5 +137,6 @@ export type GameStats<
 export type GameLeaderboard<
 	G extends Game,
 	P extends BaseGameStats = MonthlyGameStats
-> = (GameStats<G, P> & LeaderboardGameData)[];
+> = (GameStats<G, P> &
+	LeaderboardGameData & { username: string; UUID: string })[];
 
