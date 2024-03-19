@@ -243,6 +243,7 @@ export async function getServerStats(
 ): Promise<{
 	unique_players: {
 		global: number;
+		main: number;
 	} & {
 		[game in Game]: number;
 	};
