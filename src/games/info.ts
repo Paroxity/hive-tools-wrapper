@@ -28,11 +28,11 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2018,
-			month: 11
+			month: 12
 		},
 		archived: {
 			year: 2024,
-			month: 2
+			month: 3
 		}
 	},
 	[Game.DeathRun]: {
@@ -43,7 +43,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2019,
-			month: 0
+			month: 1
 		}
 	},
 	[Game.HideAndSeek]: {
@@ -53,7 +53,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2022,
-			month: 5
+			month: 6
 		}
 	},
 	[Game.MurderMystery]: {
@@ -65,7 +65,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2019,
-			month: 5
+			month: 6
 		}
 	},
 	[Game.SurvivalGames]: {
@@ -75,7 +75,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2019,
-			month: 7
+			month: 8
 		}
 	},
 	[Game.SkyWars]: {
@@ -86,7 +86,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2020,
-			month: 4
+			month: 5
 		}
 	},
 	[Game.JustBuild]: {
@@ -96,7 +96,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2022,
-			month: 0
+			month: 1
 		}
 	},
 	[Game.GroundWars]: {
@@ -106,7 +106,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2022,
-			month: 5
+			month: 6
 		}
 	},
 	[Game.BlockDrop]: {
@@ -117,7 +117,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2022,
-			month: 5
+			month: 6
 		}
 	},
 	[Game.CaptureTheFlag]: {
@@ -127,7 +127,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2022,
-			month: 5
+			month: 6
 		}
 	},
 	[Game.BlockParty]: {
@@ -137,7 +137,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2023,
-			month: 0
+			month: 1
 		}
 	},
 	[Game.Bridge]: {
@@ -147,7 +147,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2023,
-			month: 5
+			month: 6
 		}
 	},
 	[Game.Gravity]: {
@@ -157,7 +157,7 @@ export const GameInfo: Record<
 		},
 		leaderboard_epoch: {
 			year: 2023,
-			month: 6
+			month: 7
 		}
 	}
 };
