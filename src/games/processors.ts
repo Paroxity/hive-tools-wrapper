@@ -35,7 +35,7 @@ const kdrProcessedStat = (stats: PvPGameData) => {
 export const MonthlyStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, MonthlyGameStats>) => void)[];
 } = {
-	[Game.TreasureWars]: [
+	[Game.BedWars]: [
 		kdrProcessedStat,
 		stats => {
 			stats.fkdr =
@@ -83,7 +83,21 @@ export const MonthlyStatsProcessors: {
 		kdrProcessedStat,
 		...commonProcessedStats
 	],
-	[Game.Gravity]: commonProcessedStats
+	[Game.Gravity]: commonProcessedStats,
+	[Game.TreasureWars]: [
+		kdrProcessedStat,
+		stats => {
+			stats.fkdr =
+				stats.deaths === 0
+					? stats.final_kills
+					: parseFloat((stats.final_kills / stats.deaths).toFixed(2));
+			stats.fkpr =
+				stats.played === 0
+					? stats.final_kills
+					: parseFloat((stats.final_kills / stats.played).toFixed(2));
+		},
+		...commonProcessedStats
+	],
 };
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];

@@ -1,5 +1,5 @@
 export enum Game {
-	TreasureWars = "wars",
+	BedWars = "bed",
 	DeathRun = "dr",
 	HideAndSeek = "hide",
 	MurderMystery = "murder",
@@ -11,7 +11,8 @@ export enum Game {
 	CaptureTheFlag = "ctf",
 	BlockParty = "party",
 	Bridge = "bridge",
-	Gravity = "grav"
+	Gravity = "grav",
+	TreasureWars = "wars",
 }
 
 export type LeaderboardGameData = {
@@ -49,13 +50,13 @@ export interface AllTimeGameStats extends BaseGameStats {
 }
 
 type GameStatsInner<P extends BaseGameStats> = {
-	[Game.TreasureWars]: P &
+	[Game.BedWars]: P &
 		PvPGameData &
 		PrestigeGameData & {
 			final_kills: number;
 			fkdr: number;
 			fkpr: number;
-			treasure_destroyed: number;
+			beds_destroyed: number;
 		};
 	[Game.DeathRun]: P & {
 		kills: number;
@@ -126,6 +127,14 @@ type GameStatsInner<P extends BaseGameStats> = {
 		maps_completed: number;
 		maps_completed_without_dying: number;
 	};
+	[Game.TreasureWars]: P &
+		PvPGameData &
+		PrestigeGameData & {
+			final_kills: number;
+			fkdr: number;
+			fkpr: number;
+			treasure_destroyed: number;
+		};
 };
 
 export type GameStats<

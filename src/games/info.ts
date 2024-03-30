@@ -19,18 +19,12 @@ export const GameInfo: Record<
 		};
 	}
 > = {
-	[Game.TreasureWars]: {
+	[Game.BedWars]: {
 		levels: {
 			increment: 150,
-			increment_cap: 52,
-			max: 100,
-			max_prestige: 5
+			max: 25,
 		},
 		leaderboard_epoch: {
-			year: 2018,
-			month: 12
-		},
-		archived: {
 			year: 2024,
 			month: 3
 		}
@@ -159,7 +153,23 @@ export const GameInfo: Record<
 			year: 2023,
 			month: 7
 		}
-	}
+	},
+	[Game.TreasureWars]: {
+		levels: {
+			increment: 150,
+			increment_cap: 52,
+			max: 100,
+			max_prestige: 5
+		},
+		leaderboard_epoch: {
+			year: 2018,
+			month: 12
+		},
+		archived: {
+			year: 2024,
+			month: 3
+		}
+	},
 };
 
 export type GameMetainfo = {
