@@ -47,8 +47,12 @@ async function fetchData<T>(
 	}
 	cachedResponses[url] = {
 		response: fetch(hiveApiUrl + url, {
+			...init,
 			signal: controller?.signal,
-			...init
+			headers: {
+				"X-Hive-Api-Version": "2024-03-29",
+				...init?.headers
+			}
 		})
 			.then(async response => {
 				if (response.ok) return response.json();
@@ -85,7 +89,10 @@ function validateMonth(game: Game, year?: number, month?: number): void {
 	if (GameInfo[game].archived) {
 		const { year: archivedYear, month: archivedMonth } =
 			GameInfo[game].archived!;
-		if (year > archivedYear || (year === archivedYear && month > archivedMonth)) {
+		if (
+			year > archivedYear ||
+			(year === archivedYear && month > archivedMonth)
+		) {
 			throw new Error(
 				`Can not access ${game} monthly statistics for month (${month}/${year}) after archival (${archivedMonth}/${archivedYear}).`
 			);
