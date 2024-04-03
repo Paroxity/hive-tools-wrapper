@@ -1,3 +1,5 @@
+import { AllTimeGameStats, Game, GameStats } from "../games/data";
+
 export type PaidRank = "PLUS";
 
 export type Rank =
@@ -13,6 +15,33 @@ export type Rank =
 	| "COMMUNITY_MANAGER"
 	| "OWNER"
 	| PaidRank;
+
+type StatTrack = {
+	[G in Game]: {
+		game: G;
+		placeholder: string;
+	} & (
+		| { key: keyof GameStats<G, AllTimeGameStats> }
+		| {
+				keys: [
+					keyof GameStats<G, AllTimeGameStats>,
+					keyof GameStats<G, AllTimeGameStats>
+				];
+				operation: "divide" | "add" | "subtract";
+		  }
+	);
+}[Game];
+
+type BasicHubTitle = {
+	display: string;
+};
+
+type StatTrackHubTitle = BasicHubTitle & {
+	special_type: "stat_track";
+	stat_track: StatTrack[];
+};
+
+export type HubTitle = BasicHubTitle | StatTrackHubTitle;
 
 export type Avatar = { url: string; name: string };
 
@@ -32,7 +61,7 @@ export type Player = {
 	daily_login_streak?: number;
 	longest_daily_login_streak?: number;
 	hub_title_count: number;
-	hub_title_unlocked?: string[];
+	hub_title_unlocked?: HubTitle[];
 	avatar_count: number;
 	avatar_unlocked?: Avatar[];
 	costume_count: number;
@@ -42,7 +71,7 @@ export type Player = {
 	backbling_count: number;
 	"cosmetics.backbling"?: Accessory[];
 	friend_count: number;
-	equipped_hub_title?: string;
+	equipped_hub_title?: HubTitle;
 	equipped_avatar?: Avatar;
 	equipped_costume?: string;
 	equipped_backbling?: Accessory;
