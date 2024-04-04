@@ -60,26 +60,6 @@ export const MonthlyStatsProcessors: {
 	[Game.CaptureTheFlag]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.BlockParty]: commonProcessedStats,
 	[Game.Bridge]: [
-		// Transform abnormal stat keys in the leaderboard data
-		(
-			stats: GameStats<Game.Bridge, MonthlyGameStats> & {
-				m_solo_played?: number;
-				m_solo_victories?: number;
-				m_solo_kills?: number;
-				m_solo_deaths?: number;
-				m_solo_goals?: number;
-			}
-		) => {
-			["played", "victories", "kills", "deaths", "goals"].forEach(k => {
-				const key = k as keyof typeof stats;
-				const leaderboardKey = ("m_solo_" + k) as keyof typeof stats;
-				if (stats[leaderboardKey]) {
-					(stats as Record<typeof key, string | number | undefined>)[key] =
-						stats[leaderboardKey];
-					delete stats[leaderboardKey];
-				}
-			});
-		},
 		kdrProcessedStat,
 		...commonProcessedStats
 	],
