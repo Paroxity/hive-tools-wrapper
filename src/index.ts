@@ -114,14 +114,13 @@ export async function getMonthlyStats(
 
 	const data: { [G in Game]: GameStats<G, MonthlyGameStats> | null } =
 		await fetchData(url, controller, init);
-	Object.entries(data).forEach(([game, stats]) => {
+	Object.values(Game).forEach(<G extends Game>(game: G) => {
+		const stats = data[game];
 		if (!stats || Array.isArray(stats) || stats.human_index === 2147483647) {
-			data[game as keyof typeof data] = null;
+			data[game] = null;
 			return;
 		}
-		MonthlyStatsProcessors[game as Game].forEach(processor =>
-			processor(stats as GameStats<Game>)
-		);
+		MonthlyStatsProcessors[game].forEach(processor => processor(stats));
 	});
 	return data;
 }
@@ -156,17 +155,16 @@ export async function getAllTimeStats(
 	const data: { [G in Game]: GameStats<G, AllTimeGameStats> | null } & {
 		main: Player | null;
 	} = await fetchData(`/game/all/all/${identifier}`, controller, init);
-	Object.entries(data)
-		.filter(([game]) => game !== "main")
-		.forEach(([game, stats]) => {
-			if (!stats || Array.isArray(stats)) {
-				data[game as keyof typeof data] = null;
-				return;
-			}
-			AllTimeStatsProcessors[game as Game]?.forEach(processor =>
-				processor(stats as GameStats<Game>)
-			);
-		});
+	Object.values(Game).forEach(<G extends Game>(game: G) => {
+		const stats = data[game];
+		if (!stats || Array.isArray(stats)) {
+			data[game] = null;
+			return;
+		}
+		AllTimeStatsProcessors[game].forEach(processor =>
+			processor(stats as GameStats<G, AllTimeGameStats>)
+		);
+	});
 	return data;
 }
 

@@ -139,13 +139,13 @@ type GameStatsInner<P extends BaseGameStats> = {
 
 export type GameStats<
 	G extends Game,
-	P extends BaseGameStats = any
+	P extends BaseGameStats
 > = GameStatsInner<P>[G] &
 	(P extends MonthlyGameStats ? LeaderboardGameData : {});
 
 export type GameLeaderboard<
 	G extends Game,
-	P extends BaseGameStats = MonthlyGameStats
+	P extends BaseGameStats
 > = (GameStats<G, P> &
 	LeaderboardGameData & { username: string; UUID: string })[];
 
