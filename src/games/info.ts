@@ -1,7 +1,7 @@
 import { Game } from "./data";
 import _GameXpInfo from "./xp_info.json";
 
-export const GameInfo: Record<
+export const GameLeaderboardInfo: Record<
 	Game,
 	{
 		leaderboard_epoch: {

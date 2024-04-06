@@ -5,7 +5,7 @@ import {
 	GameStats,
 	MonthlyGameStats, SeasonGame, SpecialGame, SpecialLeaderboardName
 } from "./games/data";
-import { GameInfo, GameMetainfo } from "./games/info";
+import { GameLeaderboardInfo, GameMetainfo } from "./games/info";
 import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
@@ -78,7 +78,7 @@ async function fetchData<T>(
 function validateMonth(game: Game, year?: number, month?: number): void {
 	if (year === undefined || month === undefined) return;
 	const { year: epochYear, month: epochMonth } =
-		GameInfo[game].leaderboard_epoch;
+		GameLeaderboardInfo[game].leaderboard_epoch;
 
 	if (year < epochYear || (year === epochYear && month < epochMonth)) {
 		throw new Error(
@@ -86,9 +86,9 @@ function validateMonth(game: Game, year?: number, month?: number): void {
 		);
 	}
 
-	if (GameInfo[game].archived) {
+	if (GameLeaderboardInfo[game].archived) {
 		const { year: archivedYear, month: archivedMonth } =
-			GameInfo[game].archived!;
+			GameLeaderboardInfo[game].archived!;
 		if (
 			year > archivedYear ||
 			(year === archivedYear && month > archivedMonth)
