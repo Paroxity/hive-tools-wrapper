@@ -4,7 +4,7 @@ import _GameXpInfo from "./xp_info.json";
 export const GameLeaderboardInfo: Record<
 	Game,
 	{
-		leaderboard_epoch: {
+		epoch: {
 			year: number;
 			month: number;
 		};
@@ -15,85 +15,85 @@ export const GameLeaderboardInfo: Record<
 	}
 > = {
 	[Game.BedWars]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2024,
 			month: 3
 		}
 	},
 	[Game.DeathRun]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2019,
 			month: 1
 		}
 	},
 	[Game.HideAndSeek]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2022,
 			month: 6
 		}
 	},
 	[Game.MurderMystery]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2019,
 			month: 6
 		}
 	},
 	[Game.SurvivalGames]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2019,
 			month: 8
 		}
 	},
 	[Game.SkyWars]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2020,
 			month: 5
 		}
 	},
 	[Game.JustBuild]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2022,
 			month: 1
 		}
 	},
 	[Game.GroundWars]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2022,
 			month: 6
 		}
 	},
 	[Game.BlockDrop]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2022,
 			month: 6
 		}
 	},
 	[Game.CaptureTheFlag]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2022,
 			month: 6
 		}
 	},
 	[Game.BlockParty]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2023,
 			month: 1
 		}
 	},
 	[Game.Bridge]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2023,
 			month: 6
 		}
 	},
 	[Game.Gravity]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2023,
 			month: 7
 		}
 	},
 	[Game.TreasureWars]: {
-		leaderboard_epoch: {
+		epoch: {
 			year: 2018,
 			month: 12
 		},

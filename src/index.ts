@@ -78,7 +78,7 @@ async function fetchData<T>(
 function validateMonth(game: Game, year?: number, month?: number): void {
 	if (year === undefined || month === undefined) return;
 	const { year: epochYear, month: epochMonth } =
-		GameLeaderboardInfo[game].leaderboard_epoch;
+		GameLeaderboardInfo[game].epoch;
 
 	if (year < epochYear || (year === epochYear && month < epochMonth)) {
 		throw new Error(
