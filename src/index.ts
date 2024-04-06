@@ -215,10 +215,8 @@ export async function getMonthlyLeaderboard<G extends Game>(
 		}
 	}
 
-	const data: GameLeaderboard<G, MonthlyGameStats> = await fetchData(
-		url,
-		controller,
-		init
+	const data: GameLeaderboard<G, MonthlyGameStats> = Object.values(
+		await fetchData(url, controller, init)
 	);
 	MonthlyStatsProcessors[game].forEach(processor =>
 		data.forEach(d => processor(d))
