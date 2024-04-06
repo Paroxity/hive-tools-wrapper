@@ -1,4 +1,5 @@
 import { Game } from "./data";
+import _GameXpInfo from "./xp_info.json";
 
 export const GameInfo: Record<
 	Game,
@@ -169,8 +170,19 @@ export const GameInfo: Record<
 			year: 2024,
 			month: 3
 		}
-	},
+	}
 };
+
+//@ts-ignore `xp_info.json` will be missing newly added games prior to regenerating the file
+export const GameXpInfo: Record<
+	Game,
+	{
+		increment: number;
+		increment_cap?: number;
+		max: number;
+		max_prestige?: number;
+	}
+> = _GameXpInfo;
 
 export type GameMetainfo = {
 	name: string;
