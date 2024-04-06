@@ -3,7 +3,7 @@ import {
 	Game,
 	GameLeaderboard,
 	GameStats,
-	MonthlyGameStats
+	MonthlyGameStats, SeasonGame, SpecialGame, SpecialLeaderboardName
 } from "./games/data";
 import { GameInfo, GameMetainfo } from "./games/info";
 import {
@@ -147,6 +147,24 @@ export async function getGameMonthlyStats<G extends Game>(
 	return data;
 }
 
+export async function getGameSeasonStats<G extends SeasonGame>(
+	identifier: string,
+	game: G,
+	season: number,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<GameStats<G, MonthlyGameStats>> {
+	let url = `/game/season/player/${game}/${identifier}/${season}`;
+
+	const data: GameStats<G, MonthlyGameStats> = await fetchData(
+		url,
+		controller,
+		init
+	);
+	MonthlyStatsProcessors[game].forEach(processor => processor(data));
+	return data;
+}
+
 export async function getAllTimeStats(
 	identifier: string,
 	controller?: AbortController,
@@ -213,6 +231,52 @@ export async function getMonthlyLeaderboard<G extends Game>(
 			url += `/${amount}`;
 			if (skip) url += `/${skip}`;
 		}
+	}
+
+	const data: GameLeaderboard<G, MonthlyGameStats> = Object.values(
+		await fetchData(url, controller, init)
+	);
+	MonthlyStatsProcessors[game].forEach(processor =>
+		data.forEach(d => processor(d))
+	);
+	return data;
+}
+
+export async function getSeasonLeaderboard<G extends SeasonGame>(
+	game: G,
+	season: number,
+	amount?: number,
+	skip?: number,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<GameLeaderboard<G, MonthlyGameStats>> {
+	let url = `/game/season/${game}/${season}`;
+	if (amount) {
+		if (!skip) skip = 0;
+		url += `/${amount}/${skip}`;
+	}
+
+	const data: GameLeaderboard<G, MonthlyGameStats> = Object.values(
+		await fetchData(url, controller, init)
+	);
+	MonthlyStatsProcessors[game].forEach(processor =>
+		data.forEach(d => processor(d))
+	);
+	return data;
+}
+
+export async function getSpecialLeaderboard<G extends SpecialGame>(
+	game: G,
+	leaderboardName: SpecialLeaderboardName[G],
+	amount?: number,
+	skip?: number,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<GameLeaderboard<G, MonthlyGameStats>> {
+	let url = `/game/special/${game}/${leaderboardName}`;
+	if (amount) {
+		if (!skip) skip = 0;
+		url += `/${amount}/${skip}`;
 	}
 
 	const data: GameLeaderboard<G, MonthlyGameStats> = Object.values(

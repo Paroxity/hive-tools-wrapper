@@ -22,7 +22,7 @@ export const GameInfo: Record<
 	[Game.BedWars]: {
 		levels: {
 			increment: 150,
-			max: 25,
+			max: 50,
 		},
 		leaderboard_epoch: {
 			year: 2024,
@@ -180,4 +180,3 @@ export type GameMetainfo = {
 	maxPrestige: number;
 	experienceToLevel: Record<number, number>;
 };
-

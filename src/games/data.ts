@@ -149,3 +149,10 @@ export type GameLeaderboard<
 > = (GameStats<G, P> &
 	LeaderboardGameData & { username: string; UUID: string })[];
 
+export type SeasonGame = Game.BedWars;
+
+export type SpecialGame = Game.TreasureWars;
+
+export type SpecialLeaderboardName = {
+	[Game.TreasureWars]: "rewards";
+};
