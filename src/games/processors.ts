@@ -6,7 +6,7 @@ import {
 	BaseGameStats,
 	PvPGameData
 } from "./data";
-import { GameInfo } from "./info";
+import { GameXpInfo } from "./info";
 
 const commonProcessedStats: ((stats: BaseGameStats) => void)[] = [
 	stats => {
@@ -87,7 +87,7 @@ export const AllTimeStatsProcessors: {
 		[game]: [
 			(stats: AllTimeGameStats) => {
 				stats.level = calculateLevel(game as Game, stats.xp);
-				if (GameInfo[game as Game].levels.max_prestige)
+				if (GameXpInfo[game as Game].max_prestige)
 					(stats as any).prestige ??= 0;
 			},
 			...processors
@@ -119,8 +119,8 @@ function calculateLevel(game: Game, xp: number) {
 		}
 	}
 
-	const increment = GameInfo[game].levels.increment / 2;
-	const flattenLevel = GameInfo[game].levels.increment_cap;
+	const increment = GameXpInfo[game].increment / 2;
+	const flattenLevel = GameXpInfo[game].increment_cap;
 	let level =
 		(-increment + Math.sqrt(Math.pow(increment, 2) - 4 * increment * -xp)) /
 			(2 * increment) +
