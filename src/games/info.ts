@@ -117,7 +117,7 @@ export const GameXpInfo: Record<
 
 export type GameMetainfo = {
 	name: string;
-	shortName: string;
+	shortName: Uppercase<Game>;
 	maxLevel: number;
 	allowPrestiging: boolean;
 	maxPrestige: number;
