@@ -7,7 +7,7 @@
 	"scripts": {
 		"generate_xp_info": "ts-node build/generate_xp_info",
 		"build": "pnpm run generate_xp_info && tsc",
-		"prepublishOnly": "rm -r dist && pnpm run build",
+		"prepublishOnly": "rm -rf dist && pnpm run build",
 		"lint": "eslint src"
 	},
 	"keywords": [
