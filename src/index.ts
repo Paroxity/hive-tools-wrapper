@@ -3,7 +3,10 @@ import {
 	Game,
 	GameLeaderboard,
 	GameStats,
-	MonthlyGameStats, SeasonGame, SpecialGame, SpecialLeaderboardName
+	MonthlyGameStats,
+	SeasonGame,
+	SpecialGame,
+	SpecialLeaderboardName
 } from "./games/data";
 import { GameLeaderboardInfo, GameMetainfo } from "./games/info";
 import {
@@ -167,12 +170,19 @@ export async function getGameSeasonStats<G extends SeasonGame>(
 
 export async function getAllTimeStats(
 	identifier: string,
+	resolveHubTitles: boolean = true,
 	controller?: AbortController,
 	init?: RequestInit
 ) {
 	const data: { [G in Game]: GameStats<G, AllTimeGameStats> | null } & {
 		main: Player | null;
-	} = await fetchData(`/game/all/all/${identifier}`, controller, init);
+	} = await fetchData(`/game/all/all/${identifier}`, controller, {
+		...init,
+		headers: {
+			...init?.headers,
+			"X-Hive-Resolve-Dynamic-Hub-Titles": resolveHubTitles.toString()
+		}
+	});
 	Object.values(Game).forEach(<G extends Game>(game: G) => {
 		const stats = data[game];
 		if (!stats || Array.isArray(stats)) {
@@ -203,11 +213,18 @@ export async function getGameAllTimeStats<G extends Game>(
 
 export async function getMainStats(
 	identifier: string,
+	resolveHubTitles: boolean = true,
 	controller?: AbortController,
 	init?: RequestInit
-): Promise<Player> {
+) {
 	return (
-		(await fetchData(`/game/all/all/${identifier}`, controller, init)) as {
+		(await fetchData(`/game/all/all/${identifier}`, controller, {
+			...init,
+			headers: {
+				...init?.headers,
+				"X-Hive-Resolve-Dynamic-Hub-Titles": resolveHubTitles.toString()
+			}
+		})) as {
 			main: Player;
 		}
 	)["main"];
