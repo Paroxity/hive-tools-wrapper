@@ -22,13 +22,15 @@ type StatTrack = {
 		placeholder: string;
 	} & (
 		| { key: keyof GameStats<G, AllTimeGameStats> }
-		| {
+		| ({
 				keys: [
 					keyof GameStats<G, AllTimeGameStats>,
 					keyof GameStats<G, AllTimeGameStats>
 				];
-				operation: "divide" | "add" | "subtract";
-		  }
+		  } & (
+				| { operation: "add" | "subtract" }
+				| { operation: "divide"; style: "percent" | "dot" }
+		  ))
 	);
 }[Game];
 
