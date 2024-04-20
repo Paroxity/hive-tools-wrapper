@@ -81,6 +81,9 @@ type GameStatsInner<P extends BaseGameStats> = {
 			crates: number;
 			cows: number;
 			deathmatches: number;
+			teleporters_used: number;
+			launchpads_used: number;
+			flares_used: number;
 		};
 	[Game.SkyWars]: P &
 		PvPGameData & {
