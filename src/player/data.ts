@@ -76,6 +76,7 @@ export type Player = {
 	equipped_hub_title?: HubTitle;
 	equipped_avatar?: Avatar;
 	equipped_costume?: string;
+	equipped_hat?: Accessory;
 	equipped_backbling?: Accessory;
 	quest_count?: number;
 	paid_ranks?: PaidRank[];
