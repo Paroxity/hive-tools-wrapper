@@ -12,7 +12,7 @@ export enum Game {
 	BlockParty = "party",
 	Bridge = "bridge",
 	Gravity = "grav",
-	TreasureWars = "wars",
+	TreasureWars = "wars"
 }
 
 export type LeaderboardGameData = {
@@ -159,3 +159,24 @@ export type SpecialGame = Game.TreasureWars;
 export type SpecialLeaderboardName = {
 	[Game.TreasureWars]: "rewards";
 };
+
+export type ParkourStats = {
+	UUID: string;
+	parkours: {
+		[world: string]: ParkourWorld;
+	} & { total_stars: number };
+};
+
+type ParkourWorld = {
+	[course: string]: ParkourCourse;
+} & { parkour_stars: number };
+
+type ParkourCourse = {
+	best_run_time: number;
+	best_checkpoint_times: {
+		[coordinate: string]: number;
+	};
+	collected_stars: string[];
+	course_stars: number;
+};
+
