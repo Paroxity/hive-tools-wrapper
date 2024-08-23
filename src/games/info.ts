@@ -122,4 +122,24 @@ export type GameMetainfo = {
 	allowPrestiging: boolean;
 	maxPrestige: number;
 	experienceToLevel: Record<number, number>;
+	levelUnlocks: {
+		[level: number]: {
+			name: string;
+			icon: string | null;
+			type: string;
+			global: boolean;
+			globalCosmetic: {
+				url: string;
+				name: string;
+				type: string;
+			}
+		}[];
+	};
+	levelUnlockTypes: {
+		[type: string]: {
+			name: string;
+			icon: string | null;
+			default: string | null;
+		}
+	}
 };
