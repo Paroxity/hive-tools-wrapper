@@ -4,6 +4,7 @@ import {
 	GameLeaderboard,
 	GameStats,
 	MonthlyGameStats,
+	ParkourStats,
 	SeasonGame,
 	SpecialGame,
 	SpecialLeaderboardName
@@ -228,6 +229,14 @@ export async function getMainStats(
 			main: Player;
 		}
 	)["main"];
+}
+
+export async function getParkourStats(
+	identifier: string,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<ParkourStats> {
+	return await fetchData(`/game/all/parkour/${identifier}`, controller, init);
 }
 
 export async function getMonthlyLeaderboard<G extends Game>(
