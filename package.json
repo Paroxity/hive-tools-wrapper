@@ -1,6 +1,6 @@
 {
 	"name": "hive-tools-wrapper",
-	"version": "5.1.0",
+	"version": "5.2.0",
 	"description": "Type-safe wrapper for the Hive Bedrock API",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
