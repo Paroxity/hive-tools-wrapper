@@ -27,6 +27,16 @@
 		"increment_cap": 52,
 		"max": 100
 	},
+	"sky-classic": {
+		"increment": 150,
+		"increment_cap": 52,
+		"max": 100
+	},
+	"sky-kits": {
+		"increment": 150,
+		"increment_cap": 52,
+		"max": 100
+	},
 	"build": {
 		"increment": 100,
 		"max": 20

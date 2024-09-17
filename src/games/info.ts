@@ -4,7 +4,7 @@ import _GameXpInfo from "./xp_info.json";
 export const GameLeaderboardInfo: Record<
 	Game,
 	{
-		epoch: {
+		epoch?: {
 			year: number;
 			month: number;
 		};
@@ -50,6 +50,8 @@ export const GameLeaderboardInfo: Record<
 			month: 5
 		}
 	},
+	[Game.SkyWarsClassic]: {},
+	[Game.SkyWarsKits]: {},
 	[Game.JustBuild]: {
 		epoch: {
 			year: 2022,
@@ -132,7 +134,7 @@ export type GameMetainfo = {
 				url: string;
 				name: string;
 				type: string;
-			}
+			};
 		}[];
 	};
 	levelUnlockTypes: {
@@ -140,6 +142,7 @@ export type GameMetainfo = {
 			name: string;
 			icon: string | null;
 			default: string | null;
-		}
-	}
+		};
+	};
 };
+

@@ -22,10 +22,14 @@ import { getGameMetainfo } from "../src/index";
 				};
 				return;
 			}
+			// There is no `/game/meta/sky-classic` or /game/meta/sky-kits` endpoint
+			if (game === Game.SkyWarsClassic || game === Game.SkyWarsKits) {
+				return;
+			}
 
 			const metaInfo = await getGameMetainfo(game);
 
-            // The Bridge has its own level XP scaling.
+			// The Bridge has its own level XP scaling.
 			const increment =
 				game === Game.Bridge
 					? 0
@@ -58,6 +62,9 @@ import { getGameMetainfo } from "../src/index";
 			};
 		})
 	);
+
+	// There is no `/game/meta/sky-classic` or /game/meta/sky-kits` endpoint
+	xpInfo[Game.SkyWarsClassic] = xpInfo[Game.SkyWarsKits] = xpInfo[Game.SkyWars];
 
 	await writeFile(
 		"src/games/xp_info.json",

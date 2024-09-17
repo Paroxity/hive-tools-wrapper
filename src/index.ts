@@ -81,8 +81,13 @@ async function fetchData<T>(
 
 function validateMonth(game: Game, year?: number, month?: number): void {
 	if (year === undefined || month === undefined) return;
+
+	if (!GameLeaderboardInfo[game].epoch) {
+		throw new Error(`Monthly stats & leaderboards for ${game} do not exist.`);
+	}
+
 	const { year: epochYear, month: epochMonth } =
-		GameLeaderboardInfo[game].epoch;
+		GameLeaderboardInfo[game].epoch!;
 
 	if (year < epochYear || (year === epochYear && month < epochMonth)) {
 		throw new Error(
@@ -319,6 +324,10 @@ export async function getAllTimeLeaderboard<G extends Game>(
 	controller?: AbortController,
 	init?: RequestInit
 ): Promise<GameLeaderboard<G, AllTimeGameStats>> {
+	if (!GameLeaderboardInfo[game].epoch) {
+		throw new Error(`All-time leaderboard for ${game} does not exist.`);
+	}
+
 	const data: GameLeaderboard<G, AllTimeGameStats> = await fetchData(
 		`/game/all/${game}`,
 		controller,

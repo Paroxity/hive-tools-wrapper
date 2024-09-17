@@ -5,6 +5,8 @@ export enum Game {
 	MurderMystery = "murder",
 	SurvivalGames = "sg",
 	SkyWars = "sky",
+	SkyWarsClassic = "sky-classic",
+	SkyWarsKits = "sky-kits",
 	JustBuild = "build",
 	GroundWars = "ground",
 	BlockDrop = "drop",
@@ -90,6 +92,17 @@ type GameStatsInner<P extends BaseGameStats> = {
 			mystery_chests_destroyed: number;
 			ores_mined: number;
 			spells_used: number;
+		};
+	[Game.SkyWarsClassic]: P &
+		PvPGameData & {
+			selected_kit: string;
+		};
+	[Game.SkyWarsKits]: P &
+		PvPGameData & {
+			mystery_chests_destroyed: number;
+			ores_mined: number;
+			spells_used: number;
+			selected_kit: string;
 		};
 	[Game.JustBuild]: P & {
 		rating_meh_received: number;
