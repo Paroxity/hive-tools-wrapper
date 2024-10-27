@@ -365,7 +365,11 @@ export async function searchPlayer(
 	controller?: AbortController,
 	init?: RequestInit
 ): Promise<PlayerSearchResult[]> {
-	return await fetchData(`/player/search/${partial}`, controller, init);
+	return await fetchData(
+		`/player/search/${partial.toLowerCase()}`,
+		controller,
+		init
+	);
 }
 
 export * from "./games/data";
