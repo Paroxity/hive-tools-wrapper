@@ -83,3 +83,9 @@ export type Player = {
 	pets: string[];
 	mounts: string[];
 };
+
+export type PlayerSearchResult = {
+	UUID: string;
+	username: string;
+	username_cc: string;
+};
