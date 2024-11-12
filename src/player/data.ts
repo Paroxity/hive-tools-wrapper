@@ -89,3 +89,26 @@ export type PlayerSearchResult = {
 	username: string;
 	username_cc: string;
 };
+
+type RoundPlayedActivity = {
+	type: "ROUND_PLAYED";
+	game: Game;
+	victory: boolean;
+};
+
+type LockerActivity = {
+	type: "LOCKER";
+	unlock_type:
+		| "avatar"
+		| "backbling" // TODO: Verify
+		| "costume" 
+		| "hats" // TODO: Verify
+		| "hub_title"
+		| "mounts" // TODO: Verify
+		| "pets"; // TODO: Verify
+	unlock_id: string;
+};
+
+export type PlayerActivity = {
+	time: number;
+} & (RoundPlayedActivity | LockerActivity);

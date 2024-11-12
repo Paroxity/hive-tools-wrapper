@@ -14,7 +14,7 @@ import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
 } from "./games/processors";
-import { Player, PlayerSearchResult } from "./player/data";
+import { Player, PlayerActivity, PlayerSearchResult } from "./player/data";
 import { GameMap } from "./map/data";
 
 const cachedResponses: {
@@ -370,6 +370,14 @@ export async function searchPlayer(
 		controller,
 		init
 	);
+}
+
+export async function getPlayerActivity(
+	uuid: string,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<PlayerActivity[]> {
+	return await fetchData(`/player/activity/${uuid}`, controller, init);
 }
 
 export * from "./games/data";
