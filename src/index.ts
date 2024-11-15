@@ -34,6 +34,15 @@ export function setHiveApiUrl(url: string) {
 	hiveApiUrl = url;
 }
 
+export class ApiHttpError extends Error {
+	constructor(
+		message: string,
+		public status: number
+	) {
+		super(message);
+	}
+}
+
 async function fetchData<T>(
 	url: string,
 	controller?: AbortController,
@@ -62,7 +71,8 @@ async function fetchData<T>(
 				if (response.ok) return response.json();
 
 				const timeout = response.headers.get("retry-after") ?? "60";
-				if (response.status !== 429) throw new Error(response.statusText);
+				if (response.status !== 429)
+					throw new ApiHttpError(response.statusText, response.status);
 
 				await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
 				delete cachedResponses[url];
