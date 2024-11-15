@@ -35,6 +35,7 @@ export function setHiveApiUrl(url: string) {
 }
 
 export class ApiHttpError extends Error {
+	public _tag = "ApiHttpError";
 	constructor(
 		message: string,
 		public status: number
