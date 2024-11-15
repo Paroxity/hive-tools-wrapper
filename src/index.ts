@@ -176,7 +176,7 @@ export async function getAllTimeStats(
 	init?: RequestInit
 ) {
 	const data: { [G in Game]: GameStats<G, AllTimeGameStats> | null } & {
-		main: Player | null;
+		main: Player;
 	} = await fetchData(`/game/all/all/${identifier}`, controller, {
 		...init,
 		headers: {
