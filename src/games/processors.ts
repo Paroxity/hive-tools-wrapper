@@ -86,9 +86,11 @@ export const AllTimeStatsProcessors: {
 		...acc,
 		[game]: [
 			(stats: AllTimeGameStats) => {
-				stats.level = calculateLevel(game as Game, stats.xp);
-				if (GameXpInfo[game as Game].max_prestige)
+				if (GameXpInfo[game as Game].max_prestige) {
 					(stats as any).prestige ??= 0;
+					if ((stats as any).prestige > 0 && !stats.xp) stats.xp = 0;
+				}
+				stats.level = calculateLevel(game as Game, stats.xp);
 			},
 			...processors
 		]
