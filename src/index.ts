@@ -21,17 +21,23 @@ const cachedResponses: {
 	[key: string]: {
 		response: Promise<any>;
 		time: number;
+		expireTimeout: ReturnType<typeof setTimeout>;
 	};
 } = {};
 
 let hiveApiUrl = "https://api.playhive.com/v0";
-
+let cacheLife = 0; // Measured in milliseconds
 export function getHiveApiUrl(): string {
 	return hiveApiUrl;
 }
 
 export function setHiveApiUrl(url: string) {
 	hiveApiUrl = url;
+}
+
+// Enables caching and sets the cache life in seconds
+export function enableCache(seconds: number) {
+	cacheLife = seconds * 1000;
 }
 
 export class ApiHttpError extends Error {
@@ -44,50 +50,78 @@ export class ApiHttpError extends Error {
 	}
 }
 
+async function cacheRequest<T>(
+	url: string,
+	requestPromise: Promise<T>
+): Promise<T> {
+	if (cachedResponses[url]) {
+		if (Date.now() - cachedResponses[url].time < cacheLife) {
+			clearTimeout(cachedResponses[url].expireTimeout);
+			cachedResponses[url].expireTimeout = setTimeout(
+				() => delete cachedResponses[url],
+				cacheLife
+			);
+			return await cachedResponses[url].response.catch(async e => {
+				//Assume if the request errored out and the AbortController was aborted, that was the reason for the error,
+				//and that this new request is using a new AbortController and should continue.
+				if (e.name !== "AbortError") throw e;
+				// Create a new request if the cached one was aborted
+				return await fetchData(url);
+			});
+		}
+		delete cachedResponses[url];
+	}
+
+	cachedResponses[url] = {
+		response: requestPromise,
+		time: Date.now(),
+		expireTimeout: setTimeout(() => delete cachedResponses[url], cacheLife)
+	};
+
+	const data = await cachedResponses[url].response;
+	cachedResponses[url].time = Date.now();
+	return data;
+}
+
 async function fetchData<T>(
 	url: string,
 	controller?: AbortController,
 	init?: RequestInit
 ): Promise<T> {
-	if (cachedResponses[url]) {
-		if (Date.now() - cachedResponses[url].time < 5 * 60 * 1000)
-			return await cachedResponses[url].response.catch(async e => {
-				//Assume if the request errored out and the AbortController was aborted, that was the reason for the error,
-				//and that this new request is using a new AbortController and should continue.
-				if (e.name !== "AbortError") throw e;
-				return await fetchData(url);
-			});
-		delete cachedResponses[url];
-	}
-	cachedResponses[url] = {
-		response: fetch(hiveApiUrl + url, {
-			...init,
-			signal: controller?.signal,
-			headers: {
-				"X-Hive-Api-Version": "2024-03-29",
-				...init?.headers
-			}
-		})
-			.then(async response => {
-				if (response.ok) return response.json();
+	const requestPromise = fetch(hiveApiUrl + url, {
+		...init,
+		signal: controller?.signal,
+		headers: {
+			"X-Hive-Api-Version": "2024-03-29",
+			...init?.headers
+		}
+	}).then(async response => {
+		if (response.ok) return response.json();
 
-				const timeout = response.headers.get("retry-after") ?? "60";
-				if (response.status !== 429)
-					throw new ApiHttpError(response.statusText, response.status);
+		const timeout = response.headers.get("retry-after") ?? "60";
+		if (response.status !== 429)
+			throw new ApiHttpError(response.statusText, response.status);
 
-				await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
-				delete cachedResponses[url];
-				return await fetchData(url, controller);
-			})
-			.catch(e => {
-				delete cachedResponses[url];
-				throw e;
-			}),
-		time: Date.now()
-	};
-	const data = await cachedResponses[url].response;
-	cachedResponses[url].time = Date.now();
-	return data;
+		await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
+
+		if (cacheLife > 0 && url in cachedResponses) {
+			delete cachedResponses[url];
+		}
+
+		return await fetchData(url, controller);
+	});
+
+	const finalPromise =
+		cacheLife > 0
+			? requestPromise.catch(e => {
+					if (url in cachedResponses) delete cachedResponses[url];
+					throw e;
+				})
+			: requestPromise;
+
+	return cacheLife > 0
+		? await cacheRequest(url, finalPromise)
+		: await finalPromise;
 }
 
 function validateMonth(game: Game, year?: number, month?: number): void {
