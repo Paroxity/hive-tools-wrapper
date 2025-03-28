@@ -1,6 +1,6 @@
 {
 	"name": "hive-tools-wrapper",
-	"version": "7.1.0",
+	"version": "7.2.0",
 	"description": "Type-safe wrapper for the Hive Bedrock API",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -8,7 +8,8 @@
 		"generate_xp_info": "ts-node build/generate_xp_info",
 		"build": "pnpm run generate_xp_info && tsc",
 		"prepublishOnly": "rm -rf dist && pnpm run build",
-		"lint": "eslint src"
+		"lint": "eslint src",
+		"test": "bun test"
 	},
 	"keywords": [
 		"hivemc",
@@ -31,6 +32,7 @@
 		"eslint": "^8.57.0",
 		"prettier": "^3.2.5",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.4.2"
+		"typescript": "^5.4.2",
+		"@types/bun": "latest"
 	}
 }

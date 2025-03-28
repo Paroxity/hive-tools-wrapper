@@ -42,6 +42,19 @@ export function enableCache(seconds: number) {
 	cacheLife = seconds * 1000;
 }
 
+export function clearCache() {
+	for (const key in cachedResponses) {
+		clearTimeout(cachedResponses[key].expireTimeout);
+		delete cachedResponses[key];
+	}
+}
+
+// This is intended for testing and generally shouldn't
+// be used for retrieving cached data manually.
+export function getCache() {
+	return cachedResponses;
+}
+
 export function retryAfterRequestLimitTimeout(enabled: boolean) {
 	awaitRequestLimitTimeout = enabled;
 }
@@ -56,39 +69,31 @@ export class ApiHttpError extends Error {
 	}
 }
 
-async function cacheRequest<T>(
-	url: string,
-	requestPromise: Promise<T>
-): Promise<T> {
-	if (cachedResponses[url]) {
-		if (Date.now() - cachedResponses[url].time < cacheLife) {
-			return await cachedResponses[url].response.catch(async e => {
-				//Assume if the request errored out and the AbortController was aborted, that was the reason for the error,
-				//and that this new request is using a new AbortController and should continue.
-				if (e.name !== "AbortError") throw e;
-				// Create a new request if the cached one was aborted
-				return await fetchData(url);
-			});
-		}
-		delete cachedResponses[url];
-	}
-
-	cachedResponses[url] = {
-		response: requestPromise,
-		time: Date.now(),
-		expireTimeout: setTimeout(() => delete cachedResponses[url], cacheLife)
-	};
-
-	const data = await cachedResponses[url].response;
-	cachedResponses[url].time = Date.now();
-	return data;
-}
-
 async function fetchData<T>(
 	url: string,
 	controller?: AbortController,
 	init?: RequestInit
 ): Promise<T> {
+	if (cacheLife > 0 && cachedResponses[url]) {
+		if (Date.now() - cachedResponses[url].time < cacheLife) {
+			clearTimeout(cachedResponses[url].expireTimeout);
+			cachedResponses[url].expireTimeout = setTimeout(
+				() => delete cachedResponses[url],
+				cacheLife
+			);
+
+			try {
+				return await cachedResponses[url].response;
+			} catch (e: any) {
+				// Only continue if it was an AbortError, otherwise rethrow
+				if (e.name !== "AbortError") throw e;
+				// Fall through to create a new request if the cached one was aborted
+			}
+		} else {
+			delete cachedResponses[url];
+		}
+	}
+
 	const requestPromise = fetch(hiveApiUrl + url, {
 		...init,
 		signal: controller?.signal,
@@ -122,9 +127,19 @@ async function fetchData<T>(
 				})
 			: requestPromise;
 
-	return cacheLife > 0
-		? await cacheRequest(url, finalPromise)
-		: await finalPromise;
+	if (cacheLife > 0) {
+		cachedResponses[url] = {
+			response: finalPromise,
+			time: Date.now(),
+			expireTimeout: setTimeout(() => delete cachedResponses[url], cacheLife)
+		};
+
+		const data = await finalPromise;
+		cachedResponses[url].time = Date.now();
+		return data;
+	}
+
+	return await finalPromise;
 }
 
 function validateMonth(game: Game, year?: number, month?: number): void {
