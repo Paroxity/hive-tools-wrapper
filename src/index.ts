@@ -44,7 +44,7 @@ export function enableCache(seconds: number) {
 
 export function clearCache() {
 	for (const key in cachedResponses) {
-		clearTimeout(cachedResponses[key].expireTimeout);
+		clearTimeout(cachedResponses[key]?.expireTimeout);
 		delete cachedResponses[key];
 	}
 }
