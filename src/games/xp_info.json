@@ -26,7 +26,8 @@
 	"sky": {
 		"increment": 150,
 		"increment_cap": 52,
-		"max": 100
+		"max": 100,
+		"max_prestige": 5
 	},
 	"build": {
 		"increment": 100,

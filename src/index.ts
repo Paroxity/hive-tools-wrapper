@@ -14,8 +14,8 @@ import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
 } from "./games/processors";
-import { Player, PlayerActivity, PlayerSearchResult } from "./player/data";
 import { GameMap } from "./map/data";
+import { Player, PlayerActivity, PlayerSearchResult } from "./player/data";
 
 const cachedResponses: {
 	[key: string]: {
@@ -27,6 +27,8 @@ const cachedResponses: {
 
 let hiveApiUrl = "https://api.playhive.com/v0";
 let cacheLife = 0; // Measured in milliseconds
+let awaitRequestLimitTimeout = false;
+
 export function getHiveApiUrl(): string {
 	return hiveApiUrl;
 }
@@ -38,6 +40,10 @@ export function setHiveApiUrl(url: string) {
 // Enables caching and sets the cache life in seconds
 export function enableCache(seconds: number) {
 	cacheLife = seconds * 1000;
+}
+
+export function retryAfterRequestLimitTimeout(enabled: boolean) {
+	awaitRequestLimitTimeout = enabled;
 }
 
 export class ApiHttpError extends Error {
@@ -56,11 +62,6 @@ async function cacheRequest<T>(
 ): Promise<T> {
 	if (cachedResponses[url]) {
 		if (Date.now() - cachedResponses[url].time < cacheLife) {
-			clearTimeout(cachedResponses[url].expireTimeout);
-			cachedResponses[url].expireTimeout = setTimeout(
-				() => delete cachedResponses[url],
-				cacheLife
-			);
 			return await cachedResponses[url].response.catch(async e => {
 				//Assume if the request errored out and the AbortController was aborted, that was the reason for the error,
 				//and that this new request is using a new AbortController and should continue.
@@ -99,16 +100,18 @@ async function fetchData<T>(
 		if (response.ok) return response.json();
 
 		const timeout = response.headers.get("retry-after") ?? "60";
-		if (response.status !== 429)
+
+		if (response.status === 429 && awaitRequestLimitTimeout) {
+			await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
+
+			if (cacheLife > 0 && url in cachedResponses) {
+				delete cachedResponses[url];
+			}
+
+			return await fetchData(url, controller);
+		} else {
 			throw new ApiHttpError(response.statusText, response.status);
-
-		await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
-
-		if (cacheLife > 0 && url in cachedResponses) {
-			delete cachedResponses[url];
 		}
-
-		return await fetchData(url, controller);
 	});
 
 	const finalPromise =
