@@ -31,7 +31,7 @@
 	},
 	"build": {
 		"increment": 100,
-		"max": 20
+		"max": 30
 	},
 	"ground": {
 		"increment": 150,
