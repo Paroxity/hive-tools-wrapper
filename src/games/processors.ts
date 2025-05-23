@@ -54,7 +54,7 @@ export const MonthlyStatsProcessors: {
 	[Game.MurderMystery]: commonProcessedStats,
 	[Game.SurvivalGames]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.SkyWars]: [kdrProcessedStat, ...commonProcessedStats],
-	[Game.JustBuild]: commonProcessedStats,
+	[Game.BuildBattle]: commonProcessedStats,
 	[Game.GroundWars]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.BlockDrop]: commonProcessedStats,
 	[Game.CaptureTheFlag]: [kdrProcessedStat, ...commonProcessedStats],

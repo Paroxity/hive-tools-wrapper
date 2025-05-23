@@ -5,7 +5,8 @@ export enum Game {
 	MurderMystery = "murder",
 	SurvivalGames = "sg",
 	SkyWars = "sky",
-	JustBuild = "build",
+	BuildBattle = "build",
+	JustBuild = "build", // "Just Build" was renamed to "Build Battle"; https://updates.playhive.com/changelog/introducing-build-battle-and-speed-builders-ltm
 	GroundWars = "ground",
 	BlockDrop = "drop",
 	CaptureTheFlag = "ctf",
@@ -91,7 +92,7 @@ type GameStatsInner<P extends BaseGameStats> = {
 			ores_mined: number;
 			spells_used: number;
 		};
-	[Game.JustBuild]: P & {
+	[Game.BuildBattle]: P & {
 		rating_meh_received: number;
 		rating_okay_received: number;
 		rating_good_received: number;

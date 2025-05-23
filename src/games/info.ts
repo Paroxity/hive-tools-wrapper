@@ -50,7 +50,7 @@ export const GameLeaderboardInfo: Record<
 			month: 5
 		}
 	},
-	[Game.JustBuild]: {
+	[Game.BuildBattle]: {
 		epoch: {
 			year: 2022,
 			month: 1
