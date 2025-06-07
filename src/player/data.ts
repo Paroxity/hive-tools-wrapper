@@ -1,6 +1,6 @@
 import { AllTimeGameStats, Game, GameStats } from "../games/data";
 
-export type PaidRank = "PLUS";
+export type PaidRank = "PLUS" | "ULTIMATE";
 
 export type Rank =
 	| "REGULAR"
