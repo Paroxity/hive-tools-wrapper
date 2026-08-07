@@ -2,7 +2,8 @@
 	"bed": {
 		"increment": 150,
 		"increment_cap": 52,
-		"max": 100
+		"max": 100,
+		"max_prestige": 1
 	},
 	"dr": {
 		"increment": 200,
@@ -11,7 +12,7 @@
 	},
 	"hide": {
 		"increment": 100,
-		"max": 75
+		"max": 100
 	},
 	"murder": {
 		"increment": 100,
