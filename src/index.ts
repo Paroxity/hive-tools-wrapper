@@ -1,7 +1,10 @@
+import { CatalogueItem } from "./catalogue/data";
 import {
 	AllTimeGameStats,
+	AvailableMonthlyLeaderboard,
 	Game,
 	GameLeaderboard,
+	Games,
 	GameStats,
 	MonthlyGameStats,
 	ParkourStats,
@@ -142,6 +145,36 @@ async function fetchData<T>(
 	return await finalPromise;
 }
 
+function playerResolveHeaders(
+	resolveHubTitles: boolean,
+	init?: RequestInit
+): HeadersInit {
+	return {
+		...init?.headers,
+		"X-Hive-Resolve-Dynamic-Hub-Titles": resolveHubTitles.toString(),
+		"X-Hive-Resolve-Stat-Track": resolveHubTitles.toString()
+	};
+}
+
+function catalogueListUrl(
+	path: string,
+	limit?: number,
+	offset?: number
+): string {
+	if (limit !== undefined && (limit < 1 || limit > 50)) {
+		throw new Error("Catalogue limit must be between 1 and 50.");
+	}
+	if (offset !== undefined && offset < 0) {
+		throw new Error("Catalogue offset must be greater than or equal to 0.");
+	}
+
+	const params = new URLSearchParams();
+	if (limit !== undefined) params.set("limit", String(limit));
+	if (offset !== undefined) params.set("offset", String(offset));
+	const query = params.toString();
+	return query ? `${path}?${query}` : path;
+}
+
 function validateMonth(game: Game, year?: number, month?: number): void {
 	if (year === undefined || month === undefined) return;
 	const { year: epochYear, month: epochMonth } =
@@ -181,7 +214,7 @@ export async function getMonthlyStats(
 
 	const data: { [G in Game]: GameStats<G, MonthlyGameStats> | null } =
 		await fetchData(url, controller, init);
-	Object.values(Game).forEach(<G extends Game>(game: G) => {
+	Games.forEach(<G extends Game>(game: G) => {
 		const stats = data[game];
 		if (!stats || Array.isArray(stats) || stats.human_index === 2147483647) {
 			data[game] = null;
@@ -240,14 +273,12 @@ export async function getAllTimeStats(
 ) {
 	const data: { [G in Game]: GameStats<G, AllTimeGameStats> | null } & {
 		main: Player;
+		parkour: ParkourStats | null;
 	} = await fetchData(`/game/all/all/${identifier}`, controller, {
 		...init,
-		headers: {
-			...init?.headers,
-			"X-Hive-Resolve-Dynamic-Hub-Titles": resolveHubTitles.toString()
-		}
+		headers: playerResolveHeaders(resolveHubTitles, init)
 	});
-	Object.values(Game).forEach(<G extends Game>(game: G) => {
+	Games.forEach(<G extends Game>(game: G) => {
 		const stats = data[game];
 		if (!stats || Array.isArray(stats)) {
 			data[game] = null;
@@ -257,6 +288,9 @@ export async function getAllTimeStats(
 			processor(stats as GameStats<G, AllTimeGameStats>)
 		);
 	});
+	if (!data.parkour || Array.isArray(data.parkour)) {
+		data.parkour = null;
+	}
 	return data;
 }
 
@@ -282,12 +316,9 @@ export async function getMainStats(
 	init?: RequestInit
 ) {
 	return (
-		(await fetchData(`/game/all/all/${identifier}`, controller, {
+		(await fetchData(`/game/all/main/${identifier}`, controller, {
 			...init,
-			headers: {
-				...init?.headers,
-				"X-Hive-Resolve-Dynamic-Hub-Titles": resolveHubTitles.toString()
-			}
+			headers: playerResolveHeaders(resolveHubTitles, init)
 		})) as {
 			main: Player;
 		}
@@ -400,9 +431,7 @@ export async function getServerStats(
 	unique_players: {
 		global: number;
 		main: number;
-	} & {
-		[game in Game]: number;
-	};
+	} & Partial<Record<Game, number>>;
 }> {
 	return await fetchData("/global/statistics", controller, init);
 }
@@ -428,6 +457,10 @@ export async function searchPlayer(
 	controller?: AbortController,
 	init?: RequestInit
 ): Promise<PlayerSearchResult[]> {
+	if (partial.length < 4) {
+		throw new Error("Player search partial must be at least 4 characters.");
+	}
+
 	return await fetchData(
 		`/player/search/${partial.toLowerCase()}`,
 		controller,
@@ -438,11 +471,73 @@ export async function searchPlayer(
 export async function getPlayerActivity(
 	uuid: string,
 	controller?: AbortController,
-	init?: RequestInit
+	init?: RequestInit,
+	realtime?: boolean
 ): Promise<PlayerActivity[]> {
-	return await fetchData(`/player/activity/${uuid}`, controller, init);
+	const url = realtime
+		? `/player/activity/${uuid}?realtime=true`
+		: `/player/activity/${uuid}`;
+	return await fetchData(url, controller, init);
 }
 
+export async function getAvailableMonthlyLeaderboards(
+	game: Game,
+	showCounts: boolean = false,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<AvailableMonthlyLeaderboard[]> {
+	return await fetchData(`/game/monthly/${game}/available`, controller, {
+		...init,
+		headers: {
+			...init?.headers,
+			...(showCounts ? { "X-Hive-Show-Counts": "true" } : {})
+		}
+	});
+}
+
+export async function getCostumes(
+	limit?: number,
+	offset?: number,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<CatalogueItem[]> {
+	return await fetchData(
+		catalogueListUrl("/catalogue/costumes", limit, offset),
+		controller,
+		init
+	);
+}
+
+export async function getCostume(
+	id: string,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<CatalogueItem> {
+	return await fetchData(`/catalogue/costumes/${id}`, controller, init);
+}
+
+export async function getTitles(
+	limit?: number,
+	offset?: number,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<CatalogueItem[]> {
+	return await fetchData(
+		catalogueListUrl("/catalogue/titles", limit, offset),
+		controller,
+		init
+	);
+}
+
+export async function getTitle(
+	id: string,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<CatalogueItem> {
+	return await fetchData(`/catalogue/titles/${id}`, controller, init);
+}
+
+export * from "./catalogue/data";
 export * from "./games/data";
 export * from "./games/info";
 export * from "./games/processors";

@@ -13,8 +13,14 @@ export enum Game {
 	BlockParty = "party",
 	Bridge = "bridge",
 	Gravity = "grav",
-	TreasureWars = "wars"
+	TreasureWars = "wars",
+	SkyWarsClassic = "sky-classic",
+	SkyWarsKits = "sky-kits"
 }
+
+export const Games: Game[] = Object.values(Game).filter(
+	(game, index, games) => games.indexOf(game) === index
+);
 
 export type LeaderboardGameData = {
 	index: number;
@@ -46,7 +52,7 @@ export interface MonthlyGameStats extends BaseGameStats {
 
 export interface AllTimeGameStats extends BaseGameStats {
 	UUID: string;
-	first_played: number;
+	first_played?: number;
 	level: number;
 }
 
@@ -69,6 +75,7 @@ type GameStatsInner<P extends BaseGameStats> = {
 		hider_kills: number;
 		seeker_kills: number;
 		deaths: number;
+		taunts?: number;
 	};
 	[Game.MurderMystery]: P &
 		PrestigeGameData & {
@@ -76,6 +83,7 @@ type GameStatsInner<P extends BaseGameStats> = {
 			murderer_eliminations: number;
 			deaths: number;
 			coins: number;
+			bux?: number;
 		};
 	[Game.SurvivalGames]: P &
 		PvPGameData & {
@@ -91,6 +99,9 @@ type GameStatsInner<P extends BaseGameStats> = {
 			mystery_chests_destroyed: number;
 			ores_mined: number;
 			spells_used: number;
+			final_kills?: number;
+			fkdr?: number;
+			fkpr?: number;
 		};
 	[Game.BuildBattle]: P & {
 		rating_meh_received: number;
@@ -139,6 +150,17 @@ type GameStatsInner<P extends BaseGameStats> = {
 			fkpr: number;
 			treasure_destroyed: number;
 		};
+	[Game.SkyWarsClassic]: P &
+		PvPGameData & {
+			selected_kit?: string | number;
+		};
+	[Game.SkyWarsKits]: P &
+		PvPGameData & {
+			mystery_chests_destroyed?: number;
+			ores_mined?: number;
+			spells_used?: number;
+			selected_kit?: string | number;
+		};
 };
 
 export type GameStats<
@@ -179,5 +201,13 @@ type ParkourCourse = {
 	};
 	collected_stars: string[];
 	course_stars: number;
+};
+
+export type AvailableMonthlyLeaderboard = {
+	month: string;
+	year: string;
+	month_number: number;
+	resource: string;
+	count?: number;
 };
 

@@ -45,21 +45,38 @@ type StatTrackHubTitle = BasicHubTitle & {
 
 export type HubTitle = BasicHubTitle | StatTrackHubTitle;
 
-export type Avatar = { url: string; name: string };
+export type AccessoryRarity =
+	| "COMMON"
+	| "UNCOMMON"
+	| "RARE"
+	| "EPIC"
+	| "LEGENDARY"
+	| "MYTHIC";
+
+export type Avatar = {
+	url: string;
+	name: string;
+	edition?: number;
+	edition_total?: number;
+};
 
 export type Accessory = {
 	name: string;
 	icon: string;
-	rarity: "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "LEGENDARY";
+	rarity: AccessoryRarity;
+	edition?: number;
+	edition_total?: number;
 };
 
 export type Player = {
 	UUID: string;
-	xuid: string;
+	xuid: string | number;
+	mcid?: string;
 	username: string;
 	username_cc: string;
 	rank: Rank;
 	first_played: number;
+	player_number?: number;
 	daily_login_streak?: number;
 	longest_daily_login_streak?: number;
 	hub_title_count: number;
@@ -82,12 +99,13 @@ export type Player = {
 	paid_ranks?: PaidRank[];
 	pets: string[];
 	mounts: string[];
+	variable_entitlements?: string[];
 };
 
 export type PlayerSearchResult = {
 	UUID: string;
 	username: string;
-	username_cc: string;
+	username_cc: string | null;
 };
 
 type RoundPlayedActivity = {

@@ -3,7 +3,7 @@
 		"increment": 150,
 		"increment_cap": 52,
 		"max": 100,
-		"max_prestige": 1
+		"max_prestige": 2
 	},
 	"dr": {
 		"increment": 200,
@@ -60,6 +60,18 @@
 		"max": 25
 	},
 	"wars": {
+		"increment": 150,
+		"increment_cap": 52,
+		"max": 100,
+		"max_prestige": 5
+	},
+	"sky-classic": {
+		"increment": 150,
+		"increment_cap": 52,
+		"max": 100,
+		"max_prestige": 5
+	},
+	"sky-kits": {
 		"increment": 150,
 		"increment_cap": 52,
 		"max": 100,
