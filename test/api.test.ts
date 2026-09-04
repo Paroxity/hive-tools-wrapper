@@ -1,4 +1,4 @@
-import { describe, expect, spyOn, test } from "bun:test";
+import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import {
 	Game,
 	getAvailableMonthlyLeaderboards,
@@ -19,18 +19,29 @@ function jsonResponse(body: unknown, status = 200): Response {
 	});
 }
 
+function mockFetchJson(body: unknown) {
+	return spyOn(global, "fetch").mockImplementation(async () =>
+		jsonResponse(body)
+	);
+}
+
 describe("New PlayHive endpoints", () => {
+	let fetchSpy: ReturnType<typeof spyOn> | undefined;
+
+	afterEach(() => {
+		fetchSpy?.mockRestore();
+		fetchSpy = undefined;
+	});
+
 	test("getMainStats uses /game/all/main and resolve headers", async () => {
-		const fetchSpy = spyOn(global, "fetch").mockResolvedValue(
-			jsonResponse({
-				main: {
-					UUID: "test",
-					username: "player",
-					player_number: 12,
-					mcid: "abc"
-				}
-			})
-		);
+		fetchSpy = mockFetchJson({
+			main: {
+				UUID: "test",
+				username: "player",
+				player_number: 12,
+				mcid: "abc"
+			}
+		});
 
 		const main = await getMainStats("player");
 		expect(main.player_number).toBe(12);
@@ -41,11 +52,10 @@ describe("New PlayHive endpoints", () => {
 		const headers = init.headers as Record<string, string>;
 		expect(headers["X-Hive-Resolve-Dynamic-Hub-Titles"]).toBe("true");
 		expect(headers["X-Hive-Resolve-Stat-Track"]).toBe("true");
-		fetchSpy.mockRestore();
 	});
 
 	test("getCostumes and getTitles support limit and offset", async () => {
-		const fetchSpy = spyOn(global, "fetch").mockResolvedValue(jsonResponse([]));
+		fetchSpy = mockFetchJson([]);
 
 		await getCostumes(10, 20);
 		await getTitles(5, 15);
@@ -59,7 +69,6 @@ describe("New PlayHive endpoints", () => {
 			"https://api.playhive.com/v0/catalogue/costumes/costume-id",
 			"https://api.playhive.com/v0/catalogue/titles/title-id"
 		]);
-		fetchSpy.mockRestore();
 	});
 
 	test("catalogue list rejects invalid pagination", () => {
@@ -68,27 +77,22 @@ describe("New PlayHive endpoints", () => {
 	});
 
 	test("getAvailableMonthlyLeaderboards hits the available endpoint", async () => {
-		const fetchSpy = spyOn(global, "fetch").mockResolvedValue(
-			jsonResponse([
-				{
-					month: "march",
-					year: "2024",
-					month_number: 3,
-					resource: "/v0/game/monthly/bed/2024/3"
-				}
-			])
-		);
+		fetchSpy = mockFetchJson([
+			{
+				month: "march",
+				year: "2024",
+				month_number: 3,
+				resource: "/v0/game/monthly/bed/2024/3"
+			}
+		]);
 
 		const months = await getAvailableMonthlyLeaderboards(Game.BedWars, true);
 		expect(months[0].month_number).toBe(3);
 		const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe(
-			"https://api.playhive.com/v0/game/monthly/bed/available"
-		);
+		expect(url).toBe("https://api.playhive.com/v0/game/monthly/bed/available");
 		expect((init.headers as Record<string, string>)["X-Hive-Show-Counts"]).toBe(
 			"true"
 		);
-		fetchSpy.mockRestore();
 	});
 
 	test("searchPlayer requires at least 4 characters", () => {
@@ -105,10 +109,7 @@ describe("Live PlayHive API", () => {
 	}, 15000);
 
 	test("SkyWars Classic all-time stats include selected_kit", async () => {
-		const stats = await getGameAllTimeStats(
-			"NeutronicMC",
-			Game.SkyWarsClassic
-		);
+		const stats = await getGameAllTimeStats("NeutronicMC", Game.SkyWarsClassic);
 		expect(stats.selected_kit).toBe("ARCHER");
 		expect(stats.played).toBeGreaterThan(0);
 		expect(stats.level).toBeGreaterThan(1);
