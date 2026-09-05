@@ -53,7 +53,21 @@ export const MonthlyStatsProcessors: {
 	[Game.HideAndSeek]: commonProcessedStats,
 	[Game.MurderMystery]: commonProcessedStats,
 	[Game.SurvivalGames]: [kdrProcessedStat, ...commonProcessedStats],
-	[Game.SkyWars]: [kdrProcessedStat, ...commonProcessedStats],
+	[Game.SkyWars]: [
+		kdrProcessedStat,
+		stats => {
+			if (stats.final_kills === undefined) return;
+			stats.fkdr =
+				stats.deaths === 0
+					? stats.final_kills
+					: parseFloat((stats.final_kills / stats.deaths).toFixed(2));
+			stats.fkpr =
+				stats.played === 0
+					? stats.final_kills
+					: parseFloat((stats.final_kills / stats.played).toFixed(2));
+		},
+		...commonProcessedStats
+	],
 	[Game.BuildBattle]: commonProcessedStats,
 	[Game.GroundWars]: [kdrProcessedStat, ...commonProcessedStats],
 	[Game.BlockDrop]: commonProcessedStats,
@@ -78,6 +92,8 @@ export const MonthlyStatsProcessors: {
 		},
 		...commonProcessedStats
 	],
+	[Game.SkyWarsClassic]: [kdrProcessedStat, ...commonProcessedStats],
+	[Game.SkyWarsKits]: [kdrProcessedStat, ...commonProcessedStats]
 };
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];
