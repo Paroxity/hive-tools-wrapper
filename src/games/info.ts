@@ -105,13 +105,21 @@ export const GameLeaderboardInfo: Record<
 	[Game.SkyWarsClassic]: {
 		epoch: {
 			year: 2024,
-			month: 9
+			month: 8
+		},
+		archived: {
+			year: 2024,
+			month: 12
 		}
 	},
 	[Game.SkyWarsKits]: {
 		epoch: {
+			year: 2020,
+			month: 5
+		},
+		archived: {
 			year: 2024,
-			month: 9
+			month: 8
 		}
 	}
 };
