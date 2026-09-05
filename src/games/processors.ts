@@ -93,7 +93,7 @@ export const MonthlyStatsProcessors: {
 		...commonProcessedStats
 	],
 	[Game.SkyWarsClassic]: [kdrProcessedStat, ...commonProcessedStats],
-	[Game.SkyWarsKits]: [kdrProcessedStat, ...commonProcessedStats],
+	[Game.SkyWarsKits]: [kdrProcessedStat, ...commonProcessedStats]
 };
 export const AllTimeStatsProcessors: {
 	[G in Game]: ((stats: GameStats<G, AllTimeGameStats>) => void)[];

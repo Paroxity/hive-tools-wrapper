@@ -17,30 +17,133 @@ import {
 	AllTimeStatsProcessors,
 	MonthlyStatsProcessors
 } from "./games/processors";
-import {
-	ApiHttpError,
-	clearCache,
-	enableCache,
-	fetchData,
-	getCache,
-	getHiveApiUrl,
-	retryAfterRequestLimitTimeout,
-	setHiveApiKey,
-	setHiveApiUrl
-} from "./http";
 import { GameMap } from "./map/data";
 import { Player, PlayerActivity, PlayerSearchResult } from "./player/data";
 
-export {
-	ApiHttpError,
-	clearCache,
-	enableCache,
-	getCache,
-	getHiveApiUrl,
-	retryAfterRequestLimitTimeout,
-	setHiveApiKey,
-	setHiveApiUrl
-};
+const cachedResponses: {
+	[key: string]: {
+		response: Promise<any>;
+		time: number;
+		expireTimeout: ReturnType<typeof setTimeout>;
+	};
+} = {};
+
+let hiveApiUrl = "https://api.playhive.com/v0";
+let cacheLife = 0; // Measured in milliseconds
+let awaitRequestLimitTimeout = false;
+
+export function getHiveApiUrl(): string {
+	return hiveApiUrl;
+}
+
+export function setHiveApiUrl(url: string) {
+	hiveApiUrl = url;
+}
+
+// Enables caching and sets the cache life in seconds
+export function enableCache(seconds: number) {
+	cacheLife = seconds * 1000;
+}
+
+export function clearCache() {
+	for (const key in cachedResponses) {
+		clearTimeout(cachedResponses[key]?.expireTimeout);
+		delete cachedResponses[key];
+	}
+}
+
+// This is intended for testing and generally shouldn't
+// be used for retrieving cached data manually.
+export function getCache() {
+	return cachedResponses;
+}
+
+export function retryAfterRequestLimitTimeout(enabled: boolean) {
+	awaitRequestLimitTimeout = enabled;
+}
+
+export class ApiHttpError extends Error {
+	public _tag = "ApiHttpError";
+	constructor(
+		message: string,
+		public status: number
+	) {
+		super(message);
+	}
+}
+
+async function fetchData<T>(
+	url: string,
+	controller?: AbortController,
+	init?: RequestInit
+): Promise<T> {
+	if (cacheLife > 0 && cachedResponses[url]) {
+		if (Date.now() - cachedResponses[url].time < cacheLife) {
+			clearTimeout(cachedResponses[url].expireTimeout);
+			cachedResponses[url].expireTimeout = setTimeout(
+				() => delete cachedResponses[url],
+				cacheLife
+			);
+
+			try {
+				return await cachedResponses[url].response;
+			} catch (e: any) {
+				// Only continue if it was an AbortError, otherwise rethrow
+				if (e.name !== "AbortError") throw e;
+				// Fall through to create a new request if the cached one was aborted
+			}
+		} else {
+			delete cachedResponses[url];
+		}
+	}
+
+	const requestPromise = fetch(hiveApiUrl + url, {
+		...init,
+		signal: controller?.signal,
+		headers: {
+			"X-Hive-Api-Version": "2024-03-29",
+			...init?.headers
+		}
+	}).then(async response => {
+		if (response.ok) return response.json();
+
+		const timeout = response.headers.get("retry-after") ?? "60";
+
+		if (response.status === 429 && awaitRequestLimitTimeout) {
+			await new Promise(r => setTimeout(r, parseInt(timeout) * 1000));
+
+			if (cacheLife > 0 && url in cachedResponses) {
+				delete cachedResponses[url];
+			}
+
+			return await fetchData(url, controller);
+		} else {
+			throw new ApiHttpError(response.statusText, response.status);
+		}
+	});
+
+	const finalPromise =
+		cacheLife > 0
+			? requestPromise.catch(e => {
+					if (url in cachedResponses) delete cachedResponses[url];
+					throw e;
+				})
+			: requestPromise;
+
+	if (cacheLife > 0) {
+		cachedResponses[url] = {
+			response: finalPromise,
+			time: Date.now(),
+			expireTimeout: setTimeout(() => delete cachedResponses[url], cacheLife)
+		};
+
+		const data = await finalPromise;
+		cachedResponses[url].time = Date.now();
+		return data;
+	}
+
+	return await finalPromise;
+}
 
 function playerResolveHeaders(
 	resolveHubTitles: boolean,
@@ -440,4 +543,3 @@ export * from "./games/info";
 export * from "./games/processors";
 export * from "./map/data";
 export * from "./player/data";
-export * as v2 from "./v2";

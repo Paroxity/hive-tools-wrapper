@@ -52,14 +52,3 @@ import { Game, getAllTimeStats } from "hive-tools-wrapper";
 const stats = await getAllTimeStats("NeutronicMC", Game.TreasureWars);
 ```
 
-### v2 API (API key required)
-
-```ts
-import { setHiveApiKey, v2 } from "hive-tools-wrapper";
-
-setHiveApiKey("your-api-key");
-
-const player = await v2.getPlayer("NeutronicMC");
-const games = await v2.getGames();
-```
-

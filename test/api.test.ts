@@ -9,9 +9,7 @@ import {
 	getMonthlyLeaderboard,
 	getTitle,
 	getTitles,
-	searchPlayer,
-	setHiveApiKey,
-	v2
+	searchPlayer
 } from "../src";
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -136,40 +134,4 @@ describe("Live PlayHive API", () => {
 		expect(months.length).toBeGreaterThan(0);
 		expect(months[0].resource.startsWith("/v0/game/monthly/bed/")).toBe(true);
 	}, 15000);
-});
-
-describe("v2 API", () => {
-	let fetchSpy: ReturnType<typeof spyOn> | undefined;
-
-	afterEach(() => {
-		fetchSpy?.mockRestore();
-		fetchSpy = undefined;
-		setHiveApiKey();
-	});
-
-	test("sends Basic auth and hits /v2 paths", async () => {
-		setHiveApiKey("test-key", "test-secret");
-		fetchSpy = mockFetchJson({
-			id: "player",
-			username: "NeutronicMC"
-		});
-
-		const player = await v2.getPlayer("NeutronicMC");
-		expect(player.username).toBe("NeutronicMC");
-		expect(fetchSpy).toBeCalledTimes(1);
-		const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe("https://api.playhive.com/v2/players/NeutronicMC");
-		const headers = init.headers as Record<string, string>;
-		expect(headers.Authorization).toBe("Basic " + btoa("test-key:test-secret"));
-		expect(headers["X-Hive-Api-Version"]).toBeUndefined();
-	});
-
-	test("paginates collection endpoints", async () => {
-		setHiveApiKey("test-key");
-		fetchSpy = mockFetchJson({ data: [], pagination: { limit: 10 } });
-
-		await v2.getGames({ limit: 10, offset: 20 });
-		const [url] = fetchSpy.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe("https://api.playhive.com/v2/games?limit=10&offset=20");
-	});
 });
